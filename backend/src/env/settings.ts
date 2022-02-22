@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv"
 
 dotenv.config()
 
@@ -13,11 +13,11 @@ class Settings {
 
 const settings = new Settings()
 
-settings.domain = process.env.DOMAIN || 'localhost'
+settings.domain = process.env.DOMAIN || "localhost"
 settings.port = parseInt(process.env.PORT) || 3000
-settings.database_host = process.env.DATABASE_HOST || 'localhost'
+settings.database_host = process.env.DATABASE_HOST || "localhost"
 settings.database_port = parseInt(process.env.DATABASE_PORT) || 5432
-settings.database_user = process.env.DATABASE_USER || 'postgres'
-settings.database_password = process.env.DATABASE_PASSWORD || ''
+settings.database_user = process.env.DATABASE_USER || "postgres"
+settings.database_password = process.env.DATABASE_PASSWORD || ""
 
 export { settings }

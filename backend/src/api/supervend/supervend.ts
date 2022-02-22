@@ -1,5 +1,5 @@
-import express, {Response} from "express";
-import { getPool } from "../../postgres";
+import express, { Response } from "express"
+import { getPool } from "../../db/postgres"
 
 const superVendAPI = express.Router()
 const pool = getPool("supervend")
@@ -10,11 +10,11 @@ function handleQueryError(err: Error, res: Response) {
     res.send("Error connecting to database.")
 }
 
-superVendAPI.get('/', (req, res) => {
+superVendAPI.get("/", (req, res) => {
     res.send("SuperVend API, Version 1.0")
 })
 
-superVendAPI.get('/products', (req, res) => {
+superVendAPI.get("/products", (req, res) => {
     let category = req.query.category
     pool.query(`
         SELECT
@@ -36,7 +36,7 @@ superVendAPI.get('/products', (req, res) => {
         })
 })
 
-superVendAPI.get('/products/:id', (req, res) => {
+superVendAPI.get("/products/:id", (req, res) => {
     let productId = req.params.id
     pool.query(`
         SELECT

@@ -1,5 +1,5 @@
-import { Pool } from 'pg'
-import {settings} from "./settings";
+import { Pool } from "pg"
+import { settings } from "../env/settings"
 
 const pools = new Map<string, Pool>()
 

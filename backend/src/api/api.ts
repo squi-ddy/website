@@ -1,5 +1,5 @@
-import express from "express";
-import {superVendAPI} from "./supervend/supervend";
+import express from "express"
+import { superVendAPI } from "./supervend/supervend"
 
 const apiRouter = express.Router()
 

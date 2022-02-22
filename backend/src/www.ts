@@ -1,8 +1,7 @@
-import express from 'express'
-import vhost from 'vhost'
-import { settings } from "./settings";
-
-import { apiRouter } from './api/api'
+import express from "express"
+import vhost from "vhost"
+import { settings } from "./env/settings"
+import { apiRouter } from "./api/api"
 
 const app = express()
 const port = settings.port
