@@ -15,7 +15,7 @@ superVendAPI.get("/", (req, res) => {
 })
 
 superVendAPI.get("/products", (req, res) => {
-    let category = req.query.category
+    const category = req.query.category
     pool.query(`
         SELECT
         product_id,
@@ -37,7 +37,7 @@ superVendAPI.get("/products", (req, res) => {
 })
 
 superVendAPI.get("/products/:id", (req, res) => {
-    let productId = req.params.id
+    const productId = req.params.id
     pool.query(`
         SELECT
             product_id,
