@@ -1,6 +1,6 @@
 import express from "express"
 import supervend from "./supervend/supervend"
-import API from "./types/api";
+import API from "./types/api"
 
 const apiRouter = express.Router()
 const apis: API[] = [ supervend ]

@@ -1,5 +1,5 @@
-import type { Router } from "express";
-import type Info from "./info";
+import type { Router } from "express"
+import type Info from "./info"
 
 export default class API {
     router: Router
