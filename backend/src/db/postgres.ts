@@ -1,5 +1,6 @@
 import { Pool } from "pg"
 import { settings } from "../env/settings"
+import { Response } from "express"
 
 const pools = new Map<string, Pool>()
 
@@ -16,4 +17,10 @@ function getPool(database: string): Pool {
     return pool
 }
 
-export { getPool }
+function handleQueryError(err: Error, res: Response) {
+    console.error(err)
+    res.status(500)
+    res.send("Error connecting to database.")
+}
+
+export { getPool, handleQueryError }

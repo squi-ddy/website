@@ -1,47 +1,59 @@
 import { NextFunction, Request, Response } from "express"
-import { getPool } from "../../db/postgres"
-import { sha256 } from "js-sha256"
+import { getPool, handleQueryError } from "../../db/postgres"
 import bcrypt from "bcrypt"
+import { sha512 } from "js-sha512"
+import { QueryResult } from "pg"
 
 const pool = getPool("supervend")
 
 async function authenticate(req: Request, res: Response, next: NextFunction) {
-    const authorisation = req.headers.authorization
+    const authorisation = req.headers.authorization || ""
     const params = authorisation.split(" ")
     if (params.length != 2 || params[0] != "Basic") {
         res.status(401)
         res.send("Unauthorised")
+        return
     }
+    let username: string
+    let password: string
     try {
         const decoded = Buffer.from(params[1], 'base64').toString()
-        const [username, password] = decoded.split(":")
+        ;[username, password] = decoded.split(":")
         if (username == null || password == null) {
             res.status(401)
             res.send("Unauthorised")
             return
         }
-        const result = await pool.query(
-            "SELECT hash FROM users WHERE name=$1",
-            [username]
-        )
-        if (result.rowCount == 0) {
-            res.status(401)
-            res.send("Unauthorised")
-            return
-        }
-        const hash = result.rows[0].hash
-        const pwhash = sha256(password)
-        const valid = await bcrypt.compare(pwhash, hash)
-        if (valid) {
-            next()
-        } else {
-            res.status(401)
-            res.send("Unauthorised")
-        }
     } catch (err) {
         res.status(401)
         res.send("Unauthorised")
     }
+    let result: QueryResult
+    try {
+        result = await pool.query(
+            "SELECT hash FROM users WHERE name=$1",
+            [username]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (result.rowCount < 1) {
+        res.status(400)
+        res.send("User not found")
+        return
+    }
+    const hash = result.rows[0].hash
+    const password_hash = sha512(password)
+    const valid = await bcrypt.compare(password_hash, hash)
+    if (valid) {
+        res.locals.user = username
+        res.locals.password = password
+        next()
+    } else {
+        res.status(401)
+        res.send("Unauthorised")
+    }
+
 }
 
 export { authenticate }

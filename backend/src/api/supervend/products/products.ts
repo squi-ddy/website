@@ -1,16 +1,10 @@
-import express, { Response } from "express"
-import { getPool } from "../../../db/postgres"
+import express from "express"
+import { getPool, handleQueryError } from "../../../db/postgres"
 import Time from "../../types/time"
 import { authenticate } from "../auth"
 
 const productRouter = express.Router()
 const pool = getPool("supervend")
-
-function handleQueryError(err: Error, res: Response) {
-    console.error(err)
-    res.status(500)
-    res.send("Error connecting to database.")
-}
 
 productRouter.get("/", async (req, res) => {
     const category = req.query.category
