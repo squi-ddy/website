@@ -5,22 +5,24 @@ import { Response } from "express"
 const pools = new Map<string, Pool>()
 
 function getPool(database: string): Pool {
-    if (pools.has(database)) return pools.get(database)
+    const currentPool = pools.get(database)
+    if (currentPool !== undefined) {
+        return currentPool
+    }
     const pool = new Pool({
-        user: settings.database_user,
-        host: settings.database_host,
+        user: settings.DATABASE_USER,
+        host: settings.DATABASE_HOST,
         database: database,
-        password: settings.database_password,
-        port: settings.database_port
+        password: settings.DATABASE_PASS,
+        port: settings.DATABASE_PORT
     })
     pools.set(database, pool)
     return pool
 }
 
-function handleQueryError(err: Error, res: Response) {
+function handleQueryError(err: unknown, res: Response): void {
     console.error(err)
-    res.status(500)
-    res.send("Error connecting to database.")
+    res.status(500).send("Error connecting to database.")
 }
 
 export { getPool, handleQueryError }

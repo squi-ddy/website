@@ -6,12 +6,11 @@ import { QueryResult } from "pg"
 
 const pool = getPool("supervend")
 
-async function authenticate(req: Request, res: Response, next: NextFunction) {
+async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
     const authorisation = req.headers.authorization || ""
     const params = authorisation.split(" ")
     if (params.length != 2 || params[0] != "Basic") {
-        res.status(401)
-        res.send("Unauthorised")
+        res.status(401).send("Unauthorised")
         return
     }
     let username: string
@@ -19,14 +18,13 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
         const decoded = Buffer.from(params[1], 'base64').toString()
         ;[username, password] = decoded.split(":")
-        if (username == null || password == null) {
-            res.status(401)
-            res.send("Unauthorised")
+        if (username === null || password === null) {
+            res.status(401).send("Unauthorised")
             return
         }
     } catch (err) {
-        res.status(401)
-        res.send("Unauthorised")
+        res.status(401).send("Unauthorised")
+        return
     }
     let result: QueryResult
     try {
@@ -38,8 +36,7 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
         return handleQueryError(err, res)
     }
     if (result.rowCount < 1) {
-        res.status(400)
-        res.send("User not found")
+        res.status(400).send("User not found")
         return
     }
     const hash = result.rows[0].hash
@@ -50,10 +47,13 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
         res.locals.password = password
         next()
     } else {
-        res.status(401)
-        res.send("Unauthorised")
+        res.status(401).send("Unauthorised")
     }
-
 }
 
-export { authenticate }
+async function genSaltedHash(password: string): Promise<string> {
+    const passwordHash = sha512(password)
+    return bcrypt.hash(passwordHash, await bcrypt.genSalt(12))
+}
+
+export { authenticate, genSaltedHash }

@@ -1,5 +1,8 @@
 export default class Info {
-    name: string
-    version: number
-    link: string
+    constructor(
+        readonly name: string,
+        readonly version: number,
+        readonly link: string
+    ) {
+    }
 }

@@ -1,7 +1,7 @@
 export default class Time {
-    hour: number
-    minute: number
-    second: number
+    readonly hour: number
+    readonly minute: number
+    readonly second: number
 
     constructor(date: Date) {
         this.hour = date.getHours()

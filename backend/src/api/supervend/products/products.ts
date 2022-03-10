@@ -1,12 +1,13 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../../db/postgres"
-import Time from "../../types/time"
+import Time from "../types/time"
 import { authenticate } from "../auth"
+import Review from "../types/review"
 
 const productRouter = express.Router()
 const pool = getPool("supervend")
 
-productRouter.get("/", async (req, res) => {
+productRouter.get("/", async (req, res): Promise<void> => {
     const category = req.query.category
     try {
         const result = await pool.query(
@@ -29,7 +30,7 @@ productRouter.get("/", async (req, res) => {
     }
 })
 
-productRouter.get("/:id", async (req, res) => {
+productRouter.get("/:id", async (req, res): Promise<void> => {
     const productId = req.params.id
     try {
         const result = await pool.query(
@@ -54,21 +55,20 @@ productRouter.get("/:id", async (req, res) => {
             WHERE product_id = $1
             `,
             [productId])
-        if (result.rowCount == 0) {
-            res.status(404)
-            res.send("No such product.")
-        } else {
-            res.json(result.rows[0])
+        if (result.rows.length < 1) {
+            res.status(404).send("Product not found")
+            return
         }
+        res.json(result.rows[0])
     } catch (err) {
         handleQueryError(err, res)
     }
 })
 
-productRouter.get("/:id/ratings", async (req, res) => {
+productRouter.get("/:id/ratings", async (req, res): Promise<void> => {
     const productId = req.params.id
     const results = {
-        reviews: [],
+        reviews: <Array<Review>>[],
         summary: {
             total: 0,
             count: 0
@@ -79,9 +79,8 @@ productRouter.get("/:id/ratings", async (req, res) => {
             "SELECT rating, rating_ct FROM products WHERE product_id = $1",
             [productId]
         )
-        if (result.rowCount == 0) {
-            res.status(404)
-            res.send("No such product.")
+        if (result.rows.length < 1) {
+            res.status(404).send("Product not found")
             return
         }
         let record = result.rows[0]
@@ -103,13 +102,13 @@ productRouter.get("/:id/ratings", async (req, res) => {
         )
         for (record of result.rows) {
             results.reviews.push(
-                {
-                    product_id: record.product_id,
-                    user: record.name,
-                    rating: record.rating,
-                    content: record.content,
-                    time: new Time(record.time)
-                }
+                new Review(
+                    record.product_id,
+                    record.name,
+                    record.rating,
+                    record.content,
+                    new Time(record.time)
+                )
             )
         }
         res.json(results)
@@ -118,8 +117,11 @@ productRouter.get("/:id/ratings", async (req, res) => {
     }
 })
 
-productRouter.post("/:id/ratings", authenticate, (res, req) => {
-    // TODO: Port API
-})
+productRouter.post("/:id/ratings",
+    authenticate,
+    async (res, req): Promise<void> => {
+        // TODO: Port API
+    }
+)
 
 export { productRouter }

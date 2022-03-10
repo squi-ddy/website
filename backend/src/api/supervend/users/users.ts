@@ -1,68 +1,30 @@
 import express, { NextFunction, Request, Response } from "express"
 import { getPool, handleQueryError } from "../../../db/postgres"
-import { authenticate } from "../auth"
-import { sha512 } from "js-sha512"
-import bcrypt from "bcrypt"
+import { authenticate, genSaltedHash } from "../auth"
 import { QueryResult } from "pg"
 
 const usersRouter = express.Router()
 const pool = getPool("supervend")
 
 async function checkName(req: Request, res: Response, next: NextFunction) {
-    if (res.locals.user != req.params.name) {
-        res.status(401)
-        res.send("Unauthorized")
+    if (res.locals.user !== req.params.name) {
+        res.status(401).send("Unauthorized")
         return
     }
     next()
 }
 
-async function modifyPassword(password: string, req: Request, res: Response) {
-    const passwordHash = sha512(password)
-    const passwordSaltedHash = await bcrypt.hash(passwordHash, await bcrypt.genSalt(12))
-    let updateResult: QueryResult
-    try {
-        updateResult = await pool.query(
-            "UPDATE users SET hash = $2 WHERE name = $1",
-            [req.params.name, passwordSaltedHash]
-        )
-    } catch (err) {
-        return handleQueryError(err, res)
-    }
-    if (updateResult.rowCount < 1) {
-        res.status(404)
-        res.send("User not found")
-    }
-}
-
-async function depositMoney(amount: number, req: Request, res: Response) {
-    let updateResult: QueryResult
-    try {
-        updateResult = await pool.query(
-            "UPDATE users SET wallet = wallet + $2 WHERE name = $1",
-            [req.params.name, amount]
-        )
-    } catch (err) {
-        return handleQueryError(err, res)
-    }
-    if (updateResult.rowCount < 1) {
-        res.status(404)
-        res.send("User not found")
-    }
-}
-
 usersRouter.get("/:name",
     authenticate,
     checkName,
-    async (req, res) => {
+    async (req, res): Promise<void> => {
         try {
             const result = await pool.query(
                 "SELECT name, wallet FROM users WHERE name=$1",
                 [req.params.name]
             )
-            if (result.rowCount < 1) {
-                res.status(404)
-                res.send("User not found")
+            if (result.rows.length < 1) {
+                res.status(404).send("User not found")
                 return
             }
             res.json(result.rows[0])
@@ -73,12 +35,11 @@ usersRouter.get("/:name",
 )
 
 usersRouter.post("/:name",
-    async (req, res) => {
+    async (req, res): Promise<void> => {
         const name = req.params.name || ""
-        const password: string = req.body.password.toString() || ""
+        const password = String(req.body.password || "")
         if (name.length > 30 || name == "" || password == "") {
-            res.status(400)
-            res.send("Invalid parameters")
+            res.status(400).send("Invalid parameters")
             return
         }
         let result: QueryResult
@@ -91,12 +52,10 @@ usersRouter.post("/:name",
             return handleQueryError(err, res)
         }
         if (result.rowCount > 0) {
-            res.status(400)
-            res.send("User already exists")
+            res.status(400).send("User already exists")
             return
         }
-        const passwordHash = sha512(password)
-        const passwordSaltedHash = await bcrypt.hash(passwordHash, await bcrypt.genSalt(12))
+        const passwordSaltedHash = await genSaltedHash(password)
         let insertionResult: QueryResult
         try {
             insertionResult = await pool.query(
@@ -106,9 +65,8 @@ usersRouter.post("/:name",
         } catch (err) {
             return handleQueryError(err, res)
         }
-        if (insertionResult.rowCount < 1) {
-            res.status(400)
-            res.send("User already exists")
+        if (insertionResult.rows.length < 1) {
+            res.status(400).send("User already exists")
             return
         }
         res.json(insertionResult.rows[0])
@@ -118,15 +76,14 @@ usersRouter.post("/:name",
 usersRouter.delete("/:name",
     authenticate,
     checkName,
-    async (req, res) => {
+    async (req, res): Promise<void> => {
         try {
             const result = await pool.query(
                 "DELETE FROM users WHERE name=$1",
                 [req.params.name]
             )
             if (result.rowCount < 1) {
-                res.status(404)
-                res.send("User not found")
+                res.status(404).send("User not found")
                 return
             }
             res.sendStatus(204)
@@ -139,25 +96,23 @@ usersRouter.delete("/:name",
 usersRouter.patch("/:name",
     authenticate,
     checkName,
-    async (req, res) => {
-        const password: string = req.body.password.toString() || ""
-        const deposit = req.body.deposit || 0
-        const depositNumber = parseInt(deposit, 10)
-        if (isNaN(depositNumber) || depositNumber < 0) {
-            res.status(400)
-            res.send("Invalid parameters")
+    async (req, res): Promise<void> => {
+        const password = String(req.body.password || "")
+        const deposit = parseInt(req.body.deposit || 0, 10)
+        if (isNaN(deposit) || deposit < 0) {
+            res.status(400).send("Invalid parameters")
             return
         }
 
-        if (password != "" && res.locals.password != password) {
+        if (password !== "" && res.locals.password !== password) {
             // modify password
             await modifyPassword(password, req, res)
             if (res.writableEnded) return
         }
 
-        if (depositNumber != 0) {
+        if (deposit !== 0) {
             // add value
-            await depositMoney(depositNumber, req, res)
+            await depositMoney(deposit, req, res)
             if (res.writableEnded) return
         }
 
@@ -170,13 +125,169 @@ usersRouter.patch("/:name",
         } catch (err) {
             return handleQueryError(err, res)
         }
-        if (result.rowCount < 1) {
-            res.status(404)
-            res.send("User not found")
+        if (result.rows.length < 1) {
+            res.status(404).send("User not found")
             return
         }
         res.json(result.rows[0])
     }
 )
+
+async function modifyPassword(password: string, req: Request, res: Response): Promise<void> {
+    const passwordSaltedHash = await genSaltedHash(password)
+    let updateResult: QueryResult
+    try {
+        updateResult = await pool.query(
+            "UPDATE users SET hash = $2 WHERE name = $1",
+            [req.params.name, passwordSaltedHash]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (updateResult.rowCount < 1) {
+        res.status(404).send("User not found")
+    }
+}
+
+async function depositMoney(amount: number, req: Request, res: Response): Promise<void> {
+    let updateResult: QueryResult
+    try {
+        updateResult = await pool.query(
+            "UPDATE users SET wallet = wallet + $2 WHERE name = $1",
+            [req.params.name, amount]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (updateResult.rowCount < 1) {
+        res.status(404).send("User not found")
+    }
+}
+
+usersRouter.post("/:name/buy",
+    authenticate,
+    checkName,
+    async (req, res): Promise<void> => {
+        const data = req.body || {}
+
+        if (!Array.isArray(data)) {
+            res.status(400).send("Invalid parameters")
+            return
+        }
+
+        // sum up totals
+        const [total, orders] = await sumOrder(data, req, res) || [0, []]
+        if (res.writableEnded) return
+
+        // update wallet
+        const balance = await updateWallet(total, req, res) || 0
+        if (res.writableEnded) return
+
+        // update products
+        await updateStock(orders, res)
+        if (res.writableEnded) return
+
+        res.json({
+            "total": total,
+            "balance": balance,
+            "order": data
+        })
+    }
+)
+
+async function sumOrder(
+    data: { quantity: unknown, productId: unknown }[],
+    req: Request, res: Response
+): Promise<void | [number, Array<[number, string]>]> {
+    let total = 0
+    const orders: Array<[number, string]> = []
+
+    for (const order of data) {
+        const quantity = parseInt(String(order.quantity) || "-1", 10)
+        const productId = String(order.productId || "")
+        if (isNaN(quantity) || quantity < 0 || productId === "") {
+            res.status(400).send("Invalid parameters")
+            return
+        }
+        orders.push([quantity, productId])
+        let productResult: QueryResult
+        try {
+            productResult = await pool.query(
+                "SELECT price, stock FROM products WHERE product_id = $1",
+                [productId]
+            )
+        } catch (err) {
+            handleQueryError(err, res)
+            return
+        }
+        if (productResult.rows.length < 1) {
+            res.status(404).send("Product not found")
+            return
+        }
+        const {price, stock} = productResult.rows[0]
+        if (stock < quantity) {
+            res.status(400).send("Not enough stock")
+            return
+        }
+        total += price * quantity
+    }
+
+    return [total, orders]
+}
+
+async function updateWallet(total: number, req: Request, res: Response): Promise<void | number> {
+    let walletResult: QueryResult
+    try {
+        walletResult = await pool.query(
+            "SELECT wallet FROM users WHERE name = $1",
+            [req.params.name]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (walletResult.rows.length < 1) {
+        res.status(404).send("User not found")
+        return
+    }
+    const wallet = parseInt(walletResult.rows[0].wallet || 0, 10)
+    if (isNaN(wallet) || total > wallet) {
+        res.status(400).send("Not enough money")
+        return
+    }
+    let updateResult: QueryResult
+    try {
+        updateResult = await pool.query(
+            "UPDATE users SET wallet = wallet - $1 WHERE name = $2 RETURNING wallet",
+            [total, req.params.name]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (updateResult.rows.length < 1) {
+        res.status(404).send("User not found")
+        return
+    }
+    const balance = parseInt(updateResult.rows[0].wallet || 0, 10)
+    if (isNaN(balance)) {
+        res.sendStatus(500)
+    }
+}
+
+async function updateStock(orders: Array<[number, string]>, res: Response): Promise<void> {
+    for (const [quantity, productId] of orders) {
+        try {
+            const result = await pool.query(
+                "UPDATE products SET stock = stock - $1 WHERE product_id = $2",
+                [quantity, productId]
+            )
+            if (result.rowCount < 1) {
+                res.status(404).send("Product not found")
+                return
+            }
+        } catch (err) {
+            return handleQueryError(err, res)
+        }
+    }
+}
 
 export { usersRouter }

@@ -9,7 +9,7 @@ for (const api of apis) {
     apiRouter.use(`/${api.info.link}`, api.router)
 }
 
-apiRouter.get("/", (req, res) => {
+apiRouter.get("/", (req, res): void => {
     res.json({
         "apis": apis
     })

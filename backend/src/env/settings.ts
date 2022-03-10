@@ -1,23 +1,28 @@
 import dotenv from "dotenv"
 
-dotenv.config()
-
-class Settings {
-    domain: string;
-    port: number;
-    database_user: string;
-    database_password: string;
-    database_host: string;
-    database_port: number;
+if (process.env.NODE_ENV === "development") {
+    dotenv.config()
 }
 
-const settings = new Settings()
+class Settings {
+    constructor(
+        readonly DOMAIN: string,
+        readonly PORT: number,
+        readonly DATABASE_HOST: string,
+        readonly DATABASE_PORT: number,
+        readonly DATABASE_USER: string,
+        readonly DATABASE_PASS: string
+    ) {
+    }
+}
 
-settings.domain = process.env.DOMAIN || "localhost"
-settings.port = parseInt(process.env.PORT) || 3000
-settings.database_host = process.env.DATABASE_HOST || "localhost"
-settings.database_port = parseInt(process.env.DATABASE_PORT) || 5432
-settings.database_user = process.env.DATABASE_USER || "postgres"
-settings.database_password = process.env.DATABASE_PASSWORD || ""
+const settings = new Settings(
+    process.env.DOMAIN || "localhost",
+    parseInt(String(process.env.PORT), 10) || 3000,
+    process.env.DATABASE_HOST || "localhost",
+    parseInt(String(process.env.DATABASE_PORT), 10) || 5432,
+    process.env.DATABASE_USER || "postgres",
+    process.env.DATABASE_PASSWORD || ""
+)
 
 export { settings }
