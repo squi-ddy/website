@@ -1,5 +1,9 @@
 import dotenv from "dotenv"
 
+if (process.env.NODE_ENV === undefined) {
+    throw new Error("NODE_ENV not set")
+}
+
 if (process.env.NODE_ENV === "development") {
     dotenv.config()
 }

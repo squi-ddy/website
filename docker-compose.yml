@@ -1,0 +1,13 @@
+version: "3.8"
+
+networks:
+  primary:
+    external: true
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - primary

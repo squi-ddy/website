@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "npx tsc",
-    "serve": "node dist/www.js"
+    "start": "NODE_ENV=production node dist/www.js",
+    "build": "tsc",
+    "start:dev": "tsnd --watch src --respawn  --transpile-only --rs src/www.ts",
+    "docker": "npm install && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "eslint": "^8.9.0",
-    "typescript": "^4.5.5"
+    "ts-node-dev": "^1.1.8"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -27,6 +29,6 @@
     "express": "^4.17.1",
     "js-sha512": "^0.8.0",
     "pg": "^8.7.3",
-    "vhost": "^3.0.2"
+    "typescript": "^4.6.2"
   }
 }

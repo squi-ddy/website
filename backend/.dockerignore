@@ -1,0 +1,5 @@
+# npm install will be run
+/node_modules/
+
+# build runs anyway
+/dist/
