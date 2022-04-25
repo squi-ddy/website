@@ -119,8 +119,49 @@ productRouter.get("/:id/ratings", async (req, res): Promise<void> => {
 
 productRouter.post("/:id/ratings",
     authenticate,
-    async (res, req): Promise<void> => {
-        // TODO: Port API
+    async (req, res): Promise<void> => {
+        const data = req.body || {}
+        const description = data.description || ""
+        const rating = parseInt(data.rating, 10) || -1
+        if (description === "" || isNaN(rating) || rating < 0) {
+            res.status(400).send("Invalid parameters")
+            return
+        }
+
+        const time = new Date()
+
+        try {
+            let result = await pool.query(
+                "INSERT INTO ratings VALUES ($1, $2, $3, $4, $5)",
+                [res.locals.name, rating, description, time, req.params.id]
+            )
+            if (result.rowCount < 1) {
+                res.status(400).send("Invalid parameters")
+                return
+            }
+
+            result = await pool.query(`
+                    UPDATE products
+                    SET rating = rating + $1, rating_ct = rating_ct + 1
+                    WHERE product_id = $2
+                `,
+                [rating, req.params.id])
+            if (result.rowCount) {
+                res.json(
+                    new Review(
+                        req.params.id,
+                        res.locals.name,
+                        rating,
+                        description,
+                        new Time(time)
+                    )
+                )
+            } else {
+                res.status(400).send("Invalid parameters")
+            }
+        } catch (err) {
+            handleQueryError(err, res)
+        }
     }
 )
 

@@ -15,7 +15,9 @@ class Settings {
         readonly DATABASE_HOST: string,
         readonly DATABASE_PORT: number,
         readonly DATABASE_USER: string,
-        readonly DATABASE_PASS: string
+        readonly DATABASE_PASS: string,
+        readonly STATIC_SITE_NAME: string,
+        readonly STATIC_SITE_PROTOCOL: string
     ) {
     }
 }
@@ -26,7 +28,9 @@ const settings = new Settings(
     process.env.DATABASE_HOST || "localhost",
     parseInt(String(process.env.DATABASE_PORT), 10) || 5432,
     process.env.DATABASE_USER || "postgres",
-    process.env.DATABASE_PASSWORD || ""
+    process.env.DATABASE_PASSWORD || "",
+    process.env.STATIC_SITE_NAME || "localhost",
+    process.env.STATIC_SITE_PROTOCOL || "http"
 )
 
 export { settings }

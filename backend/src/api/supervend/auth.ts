@@ -56,4 +56,12 @@ async function genSaltedHash(password: string): Promise<string> {
     return bcrypt.hash(passwordHash, await bcrypt.genSalt(12))
 }
 
-export { authenticate, genSaltedHash }
+async function checkName(req: Request, res: Response, next: NextFunction) {
+    if (res.locals.user !== req.params.name) {
+        res.status(401).send("Unauthorized")
+        return
+    }
+    next()
+}
+
+export { authenticate, genSaltedHash, checkName }

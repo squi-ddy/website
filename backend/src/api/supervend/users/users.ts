@@ -1,18 +1,10 @@
-import express, { NextFunction, Request, Response } from "express"
+import express, { Request, Response } from "express"
 import { getPool, handleQueryError } from "../../../db/postgres"
-import { authenticate, genSaltedHash } from "../auth"
+import { authenticate, checkName, genSaltedHash } from "../auth"
 import { QueryResult } from "pg"
 
 const usersRouter = express.Router()
 const pool = getPool("supervend")
-
-async function checkName(req: Request, res: Response, next: NextFunction) {
-    if (res.locals.user !== req.params.name) {
-        res.status(401).send("Unauthorized")
-        return
-    }
-    next()
-}
 
 usersRouter.get("/:name",
     authenticate,
@@ -197,7 +189,7 @@ usersRouter.post("/:name/buy",
 
 async function sumOrder(
     data: { quantity: unknown, productId: unknown }[],
-    req: Request, res: Response
+    _req: Request, res: Response
 ): Promise<void | [number, Array<[number, string]>]> {
     let total = 0
     const orders: Array<[number, string]> = []
