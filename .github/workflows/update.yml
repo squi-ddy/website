@@ -14,5 +14,8 @@ jobs:
       - name: Clone repository to local
         uses: actions/checkout@v2
 
+      - name: Rebuild containers
+        run: sudo docker compose build
+
       - name: Run docker containers
         run: sudo docker compose up -d

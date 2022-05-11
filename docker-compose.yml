@@ -15,8 +15,8 @@ services:
 
   frontend:
     build: ./frontend
-    command: "npx http-server -p 3001 dist"
+    command: "npm start"
     ports:
-      - "3001:3001"
+      - "3001:8000"
     networks:
       - primary
