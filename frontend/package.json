@@ -6,8 +6,8 @@
     "build": "vite build",
     "preview": "vite preview --port 5050",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "docker": "npm install && npm run build",
-    "start": "npx http-server -p 8000 dist"
+    "docker": "npm ci && npm run build",
+    "start": "npx http-server -p 3001 dist"
   },
   "dependencies": {
     "vue": "^3.2.33",

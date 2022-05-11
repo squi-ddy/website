@@ -1,22 +1,12 @@
 version: "3.8"
 
-networks:
-  primary:
-    external: true
-
 services:
   backend:
     build: ./backend
     command: "npm start"
-    ports:
-      - "3000:3000"
-    networks:
-      - primary
+    network_mode: "host"
 
   frontend:
     build: ./frontend
     command: "npm start"
-    ports:
-      - "3001:8000"
-    networks:
-      - primary
+    network_mode: "host"
