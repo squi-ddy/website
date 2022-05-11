@@ -3,10 +3,10 @@ import { getPool, handleQueryError } from "../../../db/postgres"
 import { authenticate, checkName, genSaltedHash } from "../auth"
 import { QueryResult } from "pg"
 
-const usersRouter = express.Router()
+const userRouter = express.Router()
 const pool = getPool("supervend")
 
-usersRouter.get("/:name",
+userRouter.get("/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -26,7 +26,7 @@ usersRouter.get("/:name",
     }
 )
 
-usersRouter.post("/:name",
+userRouter.post("/:name",
     async (req, res): Promise<void> => {
         const name = req.params.name || ""
         const password = String(req.body.password || "")
@@ -65,7 +65,7 @@ usersRouter.post("/:name",
     }
 )
 
-usersRouter.delete("/:name",
+userRouter.delete("/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -85,7 +85,7 @@ usersRouter.delete("/:name",
     }
 )
 
-usersRouter.patch("/:name",
+userRouter.patch("/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -156,7 +156,7 @@ async function depositMoney(amount: number, req: Request, res: Response): Promis
     }
 }
 
-usersRouter.post("/:name/buy",
+userRouter.post("/:name/buy",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -282,4 +282,4 @@ async function updateStock(orders: Array<[number, string]>, res: Response): Prom
     }
 }
 
-export { usersRouter }
+export { userRouter }
