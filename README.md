@@ -1,2 +1,4 @@
-# website-js
-Port of my website to Vue (frontend) and Express (backend) [WIP]
+# Website
+
+A port of my website to NodeJS (Vue and Express).\
+Original (Python) implementation [here](https://github.com/squi-ddy/website)
