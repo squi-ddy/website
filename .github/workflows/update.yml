@@ -1,0 +1,17 @@
+name: Website Updater
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  Update:
+    runs-on: self-hosted
+    timeout-minutes: 5
+
+    steps:
+      - name: Clone repository to local
+        uses: actions/checkout@v2
+
+      - name: Run docker containers
+        run: docker compose up -d
