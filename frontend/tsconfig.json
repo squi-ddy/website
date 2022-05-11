@@ -17,8 +17,5 @@
     {
       "path": "./tsconfig.vite-config.json"
     }
-  ],
-  "lib": [
-    "es2020"
   ]
 }

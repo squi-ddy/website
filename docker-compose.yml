@@ -12,3 +12,11 @@ services:
       - "3000:3000"
     networks:
       - primary
+
+  frontend:
+    build: ./frontend
+    command: "npx http-server -p 3001 dist"
+    ports:
+      - "3001:3001"
+    networks:
+      - primary
