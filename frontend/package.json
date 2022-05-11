@@ -6,10 +6,11 @@
     "build": "vite build",
     "preview": "vite preview --port 5050",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "docker": "npm ci && npm run build",
-    "start": "npx http-server -p 3001 dist"
+    "docker": "yarn install && yarn run build",
+    "start": "http-server -p 3001 dist"
   },
   "dependencies": {
+    "http-server": "^14.1.0",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14"
   },

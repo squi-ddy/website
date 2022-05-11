@@ -2,5 +2,5 @@ FROM node:latest
 
 WORKDIR /app/
 COPY . .
-RUN npm run docker
+RUN yarn run docker
 EXPOSE 3000
