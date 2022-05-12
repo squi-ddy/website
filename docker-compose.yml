@@ -4,9 +4,11 @@ services:
   backend:
     build: ./backend
     command: "npm start"
-    network_mode: "host"
+    ports:
+      - "3000:3000"
 
   frontend:
     build: ./frontend
     command: "npm start"
-    network_mode: "host"
+    ports:
+      - "3001:8080"
