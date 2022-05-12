@@ -33,4 +33,6 @@ const settings = new Settings(
     process.env.STATIC_SITE_PROTOCOL || "http"
 )
 
+console.log(JSON.stringify(settings))
+
 export { settings }
