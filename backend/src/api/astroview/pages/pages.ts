@@ -39,6 +39,7 @@ pageRouter.get("/",
                         row.category
                     )
                 )
+                console.log(JSON.stringify(pages))
             }
             console.log(JSON.stringify(result.rows))
             res.json(pages)
