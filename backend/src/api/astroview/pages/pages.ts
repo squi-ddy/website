@@ -40,6 +40,7 @@ pageRouter.get("/",
                     )
                 )
             }
+            res.json(pages)
         } catch (err) {
             handleQueryError(err, res)
         }
