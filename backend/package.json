@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production node dist/www.js",
     "build": "tsc",
     "dev": "tsnd --watch src --respawn  --transpile-only --rs src/www.ts",
-    "docker": "yarn install && yarn run build"
+    "docker": "yarn && yarn run build"
   },
   "keywords": [],
   "author": "",
