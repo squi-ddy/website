@@ -4,7 +4,9 @@ if (process.env.NODE_ENV === undefined) {
     throw new Error("NODE_ENV not set")
 }
 
-dotenv.config()
+if (process.env.NODE_ENV === "development") {
+    dotenv.config()
+}
 
 class Settings {
     constructor(
