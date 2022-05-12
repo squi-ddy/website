@@ -4,6 +4,15 @@ services:
   backend:
     build: ./backend
     command: "npm start"
+    environment:
+      - DOMAIN
+      - PORT
+      - DATABASE_USER
+      - DATABASE_HOST
+      - DATABASE_PASSWORD
+      - DATABASE_PORT
+      - STATIC_SITE_NAME
+      - STATIC_SITE_PROTOCOL
     ports:
       - "3000:3000"
 
