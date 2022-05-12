@@ -11,4 +11,4 @@ services:
     build: ./frontend
     command: "npm start"
     ports:
-      - "3001:8080"
+      - "3001:8000"
