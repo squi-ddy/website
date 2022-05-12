@@ -11,7 +11,7 @@ const pool = getPool("astroview")
 
 pageRouter.get("/",
     async (_req, res): Promise<void> => {
-        const pages = new Map<string, unknown[]>()
+        const pages = new Map<string, Page[]>()
         try {
             const result = await pool.query(
                 `
@@ -40,6 +40,7 @@ pageRouter.get("/",
                     )
                 )
             }
+            console.log(JSON.stringify(result.rows))
             res.json(pages)
         } catch (err) {
             handleQueryError(err, res)
