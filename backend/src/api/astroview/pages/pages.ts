@@ -88,6 +88,7 @@ pageRouter.get("/number/:pageNum/link",
             )
             if (result.rows) {
                 res.redirect(`${settings.STATIC_SITE_PROTOCOL}://${settings.STATIC_SITE_NAME}/astroview/pages/${result.rows[0].file_name}`)
+                return
             }
             res.status(404).send("Page not found")
         } catch (err) {
