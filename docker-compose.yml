@@ -6,11 +6,13 @@ services:
     command: "npm start"
     env_file:
       - /opt/website/backend/.env.prod
+    restart: on-failure
     ports:
       - "3000:3000"
 
   frontend:
     build: ./frontend
     command: "npm start"
+    restart: on-failure
     ports:
       - "3001:8000"
