@@ -169,12 +169,12 @@ productRouter.post("/:id/ratings",
                 INSERT INTO ratings(
                     name, 
                     rating, 
-                    content, 
-                    time, 
+                    content,
+                    time,
                     product_id
                 ) VALUES ($1, $2, $3, $4, $5)
                 `,
-                [res.locals.name, rating, description, time, req.params.id]
+                [res.locals.user, rating, description, time, req.params.id]
             )
             if (result.rowCount < 1) {
                 res.status(400).send("Invalid parameters")
@@ -191,7 +191,7 @@ productRouter.post("/:id/ratings",
                 res.json(
                     new Review(
                         req.params.id,
-                        res.locals.name,
+                        res.locals.user,
                         rating,
                         description,
                         new DateTimeObject(time)
