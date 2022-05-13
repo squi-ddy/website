@@ -6,7 +6,6 @@
     "build": "vite build",
     "preview": "vite preview --port 5050",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "docker": "yarn && yarn run build",
     "start": "http-server -p 8000 dist"
   },
   "dependencies": {

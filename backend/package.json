@@ -7,8 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=production node dist/www.js",
     "build": "tsc",
-    "dev": "tsnd --watch src --respawn  --transpile-only --rs src/www.ts",
-    "docker": "yarn && yarn run build"
+    "dev": "tsnd --watch src --respawn  --transpile-only --rs src/www.ts"
   },
   "keywords": [],
   "author": "",

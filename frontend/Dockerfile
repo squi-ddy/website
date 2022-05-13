@@ -2,5 +2,6 @@ FROM node:latest
 
 WORKDIR /app/
 COPY . .
-RUN yarn run docker
+RUN yarn
+RUN yarn run build
 EXPOSE 3001
