@@ -4,7 +4,7 @@ import express from "express"
 const categoryRouter = express.Router()
 const pool = getPool("supervend")
 
-categoryRouter.get("/categories",
+categoryRouter.get("/",
     async (_req, res): Promise<void> => {
         try {
             const result = await pool.query(
