@@ -2,6 +2,7 @@ import express, { Request, Response } from "express"
 import { getPool, handleQueryError } from "../../../db/postgres"
 import { authenticate, checkName, genSaltedHash } from "../auth"
 import { QueryResult } from "pg"
+import User from "../types/user"
 
 const userRouter = express.Router()
 const pool = getPool("supervend")
@@ -19,7 +20,10 @@ userRouter.get("/:name",
                 res.status(404).send("User not found")
                 return
             }
-            res.json(result.rows[0])
+            res.json(new User(
+                result.rows[0].name,
+                result.rows[0].wallet
+            ))
         } catch (err) {
             handleQueryError(err, res)
         }
@@ -61,7 +65,10 @@ userRouter.post("/:name",
             res.status(400).send("User already exists")
             return
         }
-        res.json(insertionResult.rows[0])
+        res.json(new User(
+            insertionResult.rows[0].name,
+            insertionResult.rows[0].wallet
+        ))
     }
 )
 
@@ -121,7 +128,10 @@ userRouter.patch("/:name",
             res.status(404).send("User not found")
             return
         }
-        res.json(result.rows[0])
+        res.json(new User(
+            result.rows[0].name,
+            result.rows[0].wallet
+        ))
     }
 )
 
