@@ -138,7 +138,7 @@ pageRouter.post("/:pageNum/ratings",
     authenticate,
     async (req, res): Promise<void> => {
         const pageNumber = parseInt(req.params.pageNum, 10)
-        const content = String(req.body.content || "")
+        const content = String(req.body.description || "")
         const name: string = res.locals.user
         if (isNaN(pageNumber) || pageNumber <= 0 || content === "") {
             res.status(400).send("Invalid parameters")
