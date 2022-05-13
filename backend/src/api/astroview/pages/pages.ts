@@ -47,7 +47,7 @@ pageRouter.get("/",
     }
 )
 
-pageRouter.get("number/:pageNum",
+pageRouter.get("/number/:pageNum",
     async (req, res): Promise<void> => {
         const pageNumber = parseInt(req.params.pageNum, 10)
         if (isNaN(pageNumber) || pageNumber <= 0) {
@@ -74,7 +74,7 @@ pageRouter.get("number/:pageNum",
     }
 )
 
-pageRouter.get("number/:pageNum/link",
+pageRouter.get("/number/:pageNum/link",
     async (req, res): Promise<void> => {
         const pageNumber = parseInt(req.params.pageNum, 10)
         if (isNaN(pageNumber) || pageNumber <= 0) {
@@ -96,7 +96,7 @@ pageRouter.get("number/:pageNum/link",
     }
 )
 
-pageRouter.get(":pageNum/ratings",
+pageRouter.get("/:pageNum/ratings",
     async (req, res): Promise<void> => {
         const pageNumber = parseInt(req.params.pageNum, 10)
         if (isNaN(pageNumber) || pageNumber <= 0) {
@@ -133,7 +133,7 @@ pageRouter.get(":pageNum/ratings",
     }
 )
 
-pageRouter.post(":pageNum/ratings",
+pageRouter.post("/:pageNum/ratings",
     authenticate,
     async (req, res): Promise<void> => {
         const pageNumber = parseInt(req.params.pageNum, 10)

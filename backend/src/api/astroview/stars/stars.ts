@@ -7,7 +7,7 @@ import StarReview from "../types/starReview"
 const starRouter = express.Router()
 const pool = getPool("astroview")
 
-starRouter.get(":starNum/ratings",
+starRouter.get("/:starNum/ratings",
     async (req, res): Promise<void> => {
         const starNumber = parseInt(req.params.starNum, 10)
         if (isNaN(starNumber) || starNumber <= 0) {
@@ -44,7 +44,7 @@ starRouter.get(":starNum/ratings",
     }
 )
 
-starRouter.post(":starNum/ratings",
+starRouter.post("/:starNum/ratings",
     authenticate,
     async (req, res): Promise<void> => {
         const starNumber = parseInt(req.params.starNum, 10)

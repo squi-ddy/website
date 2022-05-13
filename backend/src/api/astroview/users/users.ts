@@ -4,7 +4,7 @@ import { authenticate, checkName, genSaltedHash } from "../auth"
 import { QueryResult } from "pg"
 
 const userRouter = express.Router()
-const pool = getPool("supervend")
+const pool = getPool("astroview")
 
 userRouter.get("/:name",
     authenticate,
