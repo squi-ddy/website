@@ -205,7 +205,7 @@ userRouter.post("/:name/buy",
 )
 
 async function sumOrder(
-    data: { quantity: unknown, productId: unknown }[],
+    data: { quantity: unknown, product_id: unknown }[],
     _req: Request, res: Response
 ): Promise<void | [number, Array<[number, string]>]> {
     let total = 0
@@ -213,7 +213,7 @@ async function sumOrder(
 
     for (const order of data) {
         const quantity = parseInt(String(order.quantity) || "-1", 10)
-        const productId = String(order.productId || "")
+        const productId = String(order.product_id || "")
         if (isNaN(quantity) || quantity < 0 || productId === "") {
             res.status(400).send("Invalid parameters")
             return
