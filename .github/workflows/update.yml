@@ -8,7 +8,6 @@ on:
 jobs:
   Update:
     runs-on: self-hosted
-    timeout-minutes: 5
 
     steps:
       - name: Clone repository to local
