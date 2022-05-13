@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import { getPool, handleQueryError } from "../../../db/postgres"
+import { getPool, handleQueryError } from "../../../util/db/postgres"
 import { authenticate, checkName, genSaltedHash } from "../auth"
 import { QueryResult } from "pg"
 

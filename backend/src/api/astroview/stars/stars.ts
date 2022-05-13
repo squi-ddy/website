@@ -1,8 +1,9 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../../db/postgres"
+import { getPool, handleQueryError } from "../../../util/db/postgres"
 import { authenticate } from "../auth"
 import StarReview from "../types/starReview"
 import DateTimeObject from "../types/dateTimeObject"
+import { getLocalTime } from "../../../util/time/time"
 
 const starRouter = express.Router()
 const pool = getPool("astroview")
@@ -55,7 +56,7 @@ starRouter.post("/:starNum/ratings",
             return
         }
 
-        const time = new Date()
+        const time = getLocalTime()
 
         try {
             const result = await pool.query(

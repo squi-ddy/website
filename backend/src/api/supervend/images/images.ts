@@ -1,5 +1,5 @@
 import express from "express"
-import { settings } from "../../../env/settings"
+import { settings } from "../../../util/env/settings"
 
 const imageRouter = express.Router()
 

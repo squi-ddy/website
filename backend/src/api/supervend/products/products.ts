@@ -1,5 +1,5 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../../db/postgres"
+import { getPool, handleQueryError } from "../../../util/db/postgres"
 import { authenticate } from "../auth"
 import Review from "../types/review"
 import ShortProduct from "../types/shortProduct"
@@ -7,6 +7,7 @@ import Rating from "../types/rating"
 import DateTimeObject from "../types/dateTimeObject"
 import Product from "../types/product"
 import DateObject from "../types/dateObject"
+import { getLocalTime } from "../../../util/time/time"
 
 const productRouter = express.Router()
 const pool = getPool("supervend")
@@ -161,7 +162,7 @@ productRouter.post("/:id/ratings",
             return
         }
 
-        const time = new Date()
+        const time = getLocalTime()
 
         try {
             let result = await pool.query(

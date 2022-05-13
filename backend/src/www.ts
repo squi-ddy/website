@@ -1,4 +1,4 @@
-import { settings } from "./env/settings"
+import { settings } from "./util/env/settings"
 import { apiRouter } from "./api/api.www"
 import http from "http"
 import express from "express"

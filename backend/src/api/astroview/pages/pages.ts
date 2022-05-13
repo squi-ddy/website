@@ -1,10 +1,11 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../../db/postgres"
+import { getPool, handleQueryError } from "../../../util/db/postgres"
 import { authenticate } from "../auth"
 import PageReview from "../types/pageReview"
 import Page from "../types/page"
-import { settings } from "../../../env/settings"
+import { settings } from "../../../util/env/settings"
 import DateTimeObject from "../types/dateTimeObject"
+import { getLocalTime } from "../../../util/time/time"
 
 const pageRouter = express.Router()
 const pool = getPool("astroview")
@@ -12,6 +13,7 @@ const pool = getPool("astroview")
 pageRouter.get("/",
     async (_req, res): Promise<void> => {
         const pages = new Map<string, Page[]>()
+
         try {
             const result = await pool.query(
                 `
@@ -145,7 +147,7 @@ pageRouter.post("/:pageNum/ratings",
             return
         }
 
-        const time = new Date()
+        const time = getLocalTime()
 
         try {
             const result = await pool.query(

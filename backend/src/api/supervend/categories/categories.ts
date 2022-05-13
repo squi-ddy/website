@@ -1,4 +1,4 @@
-import { getPool, handleQueryError } from "../../../db/postgres"
+import { getPool, handleQueryError } from "../../../util/db/postgres"
 import express from "express"
 
 const categoryRouter = express.Router()
