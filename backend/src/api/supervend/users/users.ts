@@ -177,13 +177,20 @@ userRouter.post("/:name/buy",
             return
         }
 
+        console.log(JSON.stringify(data))
+        console.log("valid")
+
         // sum up totals
         const [total, orders] = await sumOrder(data, req, res) || [0, []]
         if (res.writableEnded) return
 
+        console.log("summed")
+
         // update wallet
         const balance = await updateWallet(total, req, res) || 0
         if (res.writableEnded) return
+
+        console.log("wallet updated")
 
         // update products
         await updateStock(orders, res)
