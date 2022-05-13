@@ -165,7 +165,15 @@ productRouter.post("/:id/ratings",
 
         try {
             let result = await pool.query(
-                "INSERT INTO ratings VALUES ($1, $2, $3, $4, $5)",
+                `
+                INSERT INTO ratings(
+                    name, 
+                    rating, 
+                    content, 
+                    time, 
+                    product_id
+                ) VALUES ($1, $2, $3, $4, $5)
+                `,
                 [res.locals.name, rating, description, time, req.params.id]
             )
             if (result.rowCount < 1) {
