@@ -5,7 +5,7 @@ export default class Review {
         readonly product_id: string,
         readonly user: string,
         readonly rating: number,
-        readonly content: string,
+        readonly description: string,
         readonly time: DateTimeObject
     ) {
     }
