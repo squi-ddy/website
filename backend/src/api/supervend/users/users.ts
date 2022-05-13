@@ -177,20 +177,13 @@ userRouter.post("/:name/buy",
             return
         }
 
-        console.log(JSON.stringify(data))
-        console.log("valid")
-
         // sum up totals
         const [total, orders] = await sumOrder(data, req, res) || [0, []]
         if (res.writableEnded) return
 
-        console.log("summed")
-
         // update wallet
         const balance = await updateWallet(total, req, res) || 0
         if (res.writableEnded) return
-
-        console.log("wallet updated")
 
         // update products
         await updateStock(orders, res)
@@ -280,6 +273,8 @@ async function updateWallet(total: number, req: Request, res: Response): Promise
     if (isNaN(balance)) {
         res.sendStatus(500)
     }
+
+    return balance
 }
 
 async function updateStock(orders: Array<[number, string]>, res: Response): Promise<void> {
