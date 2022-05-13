@@ -1,8 +1,8 @@
 import express from "express"
-import Time from "../types/time"
 import { getPool, handleQueryError } from "../../../db/postgres"
 import { authenticate } from "../auth"
 import StarReview from "../types/starReview"
+import DateTimeObject from "../types/dateTimeObject"
 
 const starRouter = express.Router()
 const pool = getPool("astroview")
@@ -33,7 +33,7 @@ starRouter.get("/:starNum/ratings",
                     value.id,
                     value.name,
                     value.content,
-                    new Time(value.time),
+                    new DateTimeObject(value.time),
                     value.star
                 )
             })
@@ -68,7 +68,7 @@ starRouter.post("/:starNum/ratings",
                         result.rows[0].id,
                         name,
                         content,
-                        new Time(time),
+                        new DateTimeObject(time),
                         starNumber
                     )
                 )

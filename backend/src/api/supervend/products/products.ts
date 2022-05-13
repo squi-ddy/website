@@ -1,8 +1,12 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../../db/postgres"
-import Time from "../types/time"
 import { authenticate } from "../auth"
 import Review from "../types/review"
+import ShortProduct from "../types/shortProduct"
+import Rating from "../types/rating"
+import DateTimeObject from "../types/dateTimeObject"
+import Product from "../types/product"
+import DateObject from "../types/dateObject"
 
 const productRouter = express.Router()
 const pool = getPool("supervend")
@@ -24,6 +28,19 @@ productRouter.get("/", async (req, res): Promise<void> => {
             WHERE category = COALESCE($1, category)
             `,
             [category])
+        result.rows.forEach((value, index) => {
+            result.rows[index] = new ShortProduct(
+                value.product_id,
+                value.name,
+                value.category,
+                value.preview,
+                value.price,
+                new Rating(
+                    value.rating,
+                    value.rating_ct
+                )
+            )
+        })
         res.json(result.rows)
     } catch (err) {
         handleQueryError(err, res)
@@ -59,7 +76,23 @@ productRouter.get("/:id", async (req, res): Promise<void> => {
             res.status(404).send("Product not found")
             return
         }
-        res.json(result.rows[0])
+        const product = result.rows[0]
+        res.json(new Product(
+            product.product_id,
+            product.name,
+            product.category,
+            product.description,
+            product.company,
+            product.temp,
+            product.size,
+            product.country,
+            new DateObject(product.expiry),
+            product.stock,
+            product.preview,
+            product.images,
+            product.price,
+            new Rating(product.rating, product.rating_ct)
+        ))
     } catch (err) {
         handleQueryError(err, res)
     }
@@ -107,7 +140,7 @@ productRouter.get("/:id/ratings", async (req, res): Promise<void> => {
                     record.name,
                     record.rating,
                     record.content,
-                    new Time(record.time)
+                    new DateTimeObject(record.time)
                 )
             )
         }
@@ -153,7 +186,7 @@ productRouter.post("/:id/ratings",
                         res.locals.name,
                         rating,
                         description,
-                        new Time(time)
+                        new DateTimeObject(time)
                     )
                 )
             } else {

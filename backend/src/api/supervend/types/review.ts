@@ -1,4 +1,4 @@
-import Time from "./time"
+import DateTimeObject from "./dateTimeObject"
 
 export default class Review {
     constructor(
@@ -6,7 +6,7 @@ export default class Review {
         readonly user: string,
         readonly rating: number,
         readonly content: string,
-        readonly time: Time
+        readonly time: DateTimeObject
     ) {
     }
 }

@@ -1,10 +1,10 @@
 import express from "express"
-import Time from "../types/time"
 import { getPool, handleQueryError } from "../../../db/postgres"
 import { authenticate } from "../auth"
 import PageReview from "../types/pageReview"
 import Page from "../types/page"
 import { settings } from "../../../env/settings"
+import DateTimeObject from "../types/dateTimeObject"
 
 const pageRouter = express.Router()
 const pool = getPool("astroview")
@@ -123,7 +123,7 @@ pageRouter.get("/:pageNum/ratings",
                     value.id,
                     value.name,
                     value.content,
-                    new Time(value.time),
+                    new DateTimeObject(value.time),
                     value.page
                 )
             })
@@ -158,7 +158,7 @@ pageRouter.post("/:pageNum/ratings",
                         result.rows[0].id,
                         name,
                         content,
-                        new Time(time),
+                        new DateTimeObject(time),
                         pageNumber
                     )
                 )
