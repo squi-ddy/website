@@ -13,7 +13,7 @@ productRouter.get("/", async (req, res): Promise<void> => {
         const result = await pool.query(
             `
             SELECT
-            product_id,
+                product_id,
                 name,
                 category,
                 preview,
