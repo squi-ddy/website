@@ -48,7 +48,7 @@ starRouter.post("/:starNum/ratings",
     authenticate,
     async (req, res): Promise<void> => {
         const starNumber = parseInt(req.params.starNum, 10)
-        const content = String(req.body.content || "")
+        const content = String(req.body.description || "")
         const name: string = res.locals.user
         if (isNaN(starNumber) || starNumber <= 0 || content === "") {
             res.status(400).send("Invalid parameters")
