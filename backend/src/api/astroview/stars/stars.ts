@@ -1,6 +1,6 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate } from "../auth"
+import { authenticate } from "../util/auth"
 import StarReview from "../types/starReview"
 import DateTimeObject from "../types/dateTimeObject"
 import { getLocalTime } from "../../../util/time/time"

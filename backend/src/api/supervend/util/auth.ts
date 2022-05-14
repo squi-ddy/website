@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express"
-import { getPool, handleQueryError } from "../../util/db/postgres"
+import { getPool, handleQueryError } from "../../../util/db/postgres"
 import bcrypt from "bcrypt"
 import { sha512 } from "js-sha512"
 import { QueryResult } from "pg"
 
-const pool = getPool("astroview")
+const pool = getPool("supervend")
 
 async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
     const authorisation = req.headers.authorization || ""

@@ -1,6 +1,6 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate } from "../auth"
+import { authenticate } from "../util/auth"
 import Review from "../types/review"
 import ShortProduct from "../types/shortProduct"
 import Rating from "../types/rating"

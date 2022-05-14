@@ -1,11 +1,11 @@
 import express from "express"
-import { settings } from "../../../util/env/settings"
+import { getStaticUrl } from "../../../util/static/static"
 
 const imageRouter = express.Router()
 
 imageRouter.get("/:imageName",
     (req, res) => {
-        res.redirect(`${settings.STATIC_SITE_PROTOCOL}://${settings.STATIC_SITE_NAME}/supervend/images/${req.params.imageName}`)
+        res.redirect(getStaticUrl("supervend", ["images", req.params.imageName]))
     }
 )
 

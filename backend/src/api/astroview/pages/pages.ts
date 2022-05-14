@@ -1,11 +1,11 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate } from "../auth"
+import { authenticate } from "../util/auth"
 import PageReview from "../types/pageReview"
 import Page from "../types/page"
-import { settings } from "../../../util/env/settings"
 import DateTimeObject from "../types/dateTimeObject"
 import { getLocalTime } from "../../../util/time/time"
+import { getStaticUrl } from "../../../util/static/static"
 
 const pageRouter = express.Router()
 const pool = getPool("astroview")
@@ -89,7 +89,7 @@ pageRouter.get("/number/:pageNum/link",
                 [pageNumber]
             )
             if (result.rows) {
-                res.redirect(`${settings.STATIC_SITE_PROTOCOL}://${settings.STATIC_SITE_NAME}/astroview/pages/${result.rows[0].file_name}`)
+                res.redirect(getStaticUrl("astroview", ["pages", result.rows[0].file_name]))
                 return
             }
             res.status(404).send("Page not found")
