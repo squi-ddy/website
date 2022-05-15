@@ -57,7 +57,8 @@ async function getLCS(): Promise<LCSMeaning | null> {
                 l,
                 c,
                 s,
-                sus
+                sus,
+                id
             FROM history
             WHERE day=$1
             `,
@@ -67,16 +68,20 @@ async function getLCS(): Promise<LCSMeaning | null> {
         return null
     }
 
-    let lcs
+    let lcs: LCS
+    let id: number
     if (result.rows.length > 0) {
         lcs = result.rows[0] as LCS
+        id = result.rows[0].id
     } else {
         lcs = await generateLCS()
         try {
-            await pool.query(
-                `INSERT INTO history(day, l, c, s, sus) VALUES ($1, $2, $3, $4, $5)`,
+            const insertResult = await pool.query(
+                `INSERT INTO history(day, l, c, s, sus) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
                 [date, lcs.l, lcs.c, lcs.s, lcs.sus]
             )
+            if (insertResult.rows.length === 0) return null
+            id = insertResult.rows[0].id
         } catch (e) {
             return null
         }
@@ -102,7 +107,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
 
     const checkNext = time.startOf('day').plus(Duration.fromObject({days: 1, minutes: 2})).plus(rolloverOffset)
 
-    return new LCSMeaning(meanings, time.toISODate(), checkNext.toISO())
+    return new LCSMeaning(meanings, time.toISODate(), id, checkNext.toISO())
 }
 
 lcsRouter.get("/",
