@@ -12,7 +12,7 @@ import Meaning from "./types/meaning"
 
 const lcsRouter = express.Router()
 const pool = getPool("lcs")
-const rolloverOffset = Duration.fromObject({hours: 21, minutes: 0})
+const rolloverOffset = Duration.fromObject({hours: 6, minutes: 0})
 const wordChances = normaliseChances(lcsWordChances)
 
 async function generateLCS(): Promise<LCS> {
@@ -45,8 +45,7 @@ async function generateLCS(): Promise<LCS> {
 }
 
 async function getLCS(): Promise<LCSMeaning | null> {
-    const time = getLocalDateTime()
-    time.minus(rolloverOffset)
+    const time = getLocalDateTime().minus(rolloverOffset)
     const date = time.toSQLDate()
 
     // Check if we already generated today's LCS
@@ -101,7 +100,9 @@ async function getLCS(): Promise<LCSMeaning | null> {
         ))
     }
 
-    return new LCSMeaning(meanings, date)
+    const checkNext = time.startOf('day').plus(Duration.fromObject({days: 1, minutes: 2})).plus(rolloverOffset)
+
+    return new LCSMeaning(meanings, time.toISODate(), checkNext.toISO())
 }
 
 lcsRouter.get("/",
