@@ -101,7 +101,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
         ))
     }
 
-    return new LCSMeaning(meanings)
+    return new LCSMeaning(meanings, date)
 }
 
 lcsRouter.get("/",
