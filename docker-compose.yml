@@ -5,7 +5,7 @@ services:
     build: ./backend
     command: "npm start"
     env_file:
-      - /opt/website/backend/.env.prod
+      - /opt/website-runner/.env-backend.prod
     restart: on-failure
     ports:
       - "3000:3000"
