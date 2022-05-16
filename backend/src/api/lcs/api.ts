@@ -1,7 +1,7 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../util/db/postgres"
 import lcsWordChances from "./data/lcsWordChances"
-import { getDictionaryLink, indexLCS, normaliseChances, selectFromChances } from "./util/util"
+import { getDictionaryHeaders, getDictionaryLink, indexLCS, normaliseChances, selectFromChances } from "./util/util"
 import { getStaticUrl } from "../../util/static/static"
 import axios from "axios"
 import LCS from "./types/lcs"
@@ -31,7 +31,7 @@ async function generateLCS(): Promise<LCS> {
             const word = words[Math.floor(Math.random() * words.length)]
             // check if dictionary api thinks this is a real word
             try {
-                await axios.get(getDictionaryLink(word))
+                await axios.get(getDictionaryLink(word), {headers: getDictionaryHeaders()})
                 wordFound = true
                 chosenWords.push(word)
             } catch (e) {
@@ -91,17 +91,9 @@ async function getLCS(): Promise<LCSMeaning | null> {
     const meanings = Array<Meaning>()
     for (let i = 0; i < 4; i++) {
         const word = indexLCS(lcs, i)
-        const response = await axios.get(getDictionaryLink(word))
-        const sources = new Set<string>()
-        ;(response.data as [{ sourceUrls: string[] }]).forEach(
-            (meaning) => {
-                meaning.sourceUrls.forEach((url) => sources.add(url))
-            }
-        )
 
         meanings.push(new Meaning(
-            word,
-            Array.from(sources)
+            word
         ))
     }
 

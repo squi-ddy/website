@@ -1,6 +1,7 @@
 import LCSChances from "../types/lcsChances"
 import StartChances from "../types/startChances"
 import LCS from "../types/lcs"
+import { settings } from "../../../util/env/settings"
 
 function normaliseChances(chances: LCSChances): LCSChances {
     for (const chanceArray of chances.chancesArray) {
@@ -42,7 +43,14 @@ function indexLCS(lcs: LCS, index: number): string {
 }
 
 function getDictionaryLink(word: string): string {
-    return `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+    return `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${word}`
 }
 
-export { normaliseChances, selectFromChances, indexLCS, getDictionaryLink }
+function getDictionaryHeaders(): { app_id: string, app_key: string } {
+    return {
+        app_id: settings.OXFORD_API_ID,
+        app_key: settings.OXFORD_API_KEY
+    }
+}
+
+export { normaliseChances, selectFromChances, indexLCS, getDictionaryLink, getDictionaryHeaders }
