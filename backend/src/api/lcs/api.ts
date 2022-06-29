@@ -1,7 +1,7 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../util/db/postgres"
 import lcsWordChances from "./data/lcsWordChances"
-import { getDictionaryHeaders, getDictionaryLink, indexLCS, normaliseChances, selectFromChances } from "./util/util"
+import { indexLCS, normaliseChances, selectFromChances } from "./util/util"
 import { getStaticUrl } from "../../util/static/static"
 import axios from "axios"
 import LCS from "./types/lcs"
