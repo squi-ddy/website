@@ -12,7 +12,7 @@ import Meaning from "./types/meaning"
 
 const lcsRouter = express.Router()
 const pool = getPool("lcs")
-const rolloverOffset = Duration.fromObject({hours: 6, minutes: 0})
+const rolloverOffset = Duration.fromObject({ hours: 6, minutes: 0 })
 const wordChances = normaliseChances(lcsWordChances)
 
 async function generateLCS(): Promise<LCS> {
@@ -21,11 +21,13 @@ async function generateLCS(): Promise<LCS> {
         const startsWith = selectFromChances(chanceArray)
         let wordsResponse
         try {
-            wordsResponse = await axios.get(getStaticUrl("lcs", [`${startsWith}.txt`]))
+            wordsResponse = await axios.get(
+                getStaticUrl("lcs", [`${startsWith}.txt`])
+            )
         } catch (e) {
             throw new Error("Error generating LCS: Failed get on txt file")
         }
-        let words = String(wordsResponse.data).split('\n')
+        const words = String(wordsResponse.data).split("\n")
         const word = words[Math.floor(Math.random() * words.length)]
         chosenWords.push(word)
     }
@@ -81,38 +83,35 @@ async function getLCS(): Promise<LCSMeaning | null> {
     for (let i = 0; i < 4; i++) {
         const word = indexLCS(lcs, i)
 
-        meanings.push(new Meaning(
-            word
-        ))
+        meanings.push(new Meaning(word))
     }
 
-    const checkNext = time.startOf('day').plus(Duration.fromObject({days: 1, minutes: 2})).plus(rolloverOffset)
+    const checkNext = time
+        .startOf("day")
+        .plus(Duration.fromObject({ days: 1, minutes: 2 }))
+        .plus(rolloverOffset)
 
     return new LCSMeaning(meanings, time.toISODate(), id, checkNext.toISO())
 }
 
-lcsRouter.get("/",
-    async (_req, res) => {
-        const lcs = await getLCS()
-        if (lcs === null) {
-            handleQueryError(new Error("DB error"), res)
-        } else {
-            delete (lcs as { sus?: Meaning }).sus
-            res.json(lcs)
-        }
+lcsRouter.get("/", async (_req, res) => {
+    const lcs = await getLCS()
+    if (lcs === null) {
+        handleQueryError(new Error("DB error"), res)
+    } else {
+        delete (lcs as { sus?: Meaning }).sus
+        res.json(lcs)
     }
-)
+})
 
-lcsRouter.get("/us",
-    async (_req, res) => {
-        const lcs = await getLCS()
-        if (lcs === null) {
-            handleQueryError(new Error("DB error"), res)
-        } else {
-            delete (lcs as { s?: Meaning }).s
-            res.json(lcs)
-        }
+lcsRouter.get("/us", async (_req, res) => {
+    const lcs = await getLCS()
+    if (lcs === null) {
+        handleQueryError(new Error("DB error"), res)
+    } else {
+        delete (lcs as { s?: Meaning }).s
+        res.json(lcs)
     }
-)
+})
 
 export { lcsRouter }

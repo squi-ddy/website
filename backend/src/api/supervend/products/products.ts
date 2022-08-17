@@ -28,7 +28,8 @@ productRouter.get("/", async (req, res): Promise<void> => {
             FROM products
             WHERE category = COALESCE($1, category)
             `,
-            [category])
+            [category]
+        )
         result.rows.forEach((value, index) => {
             result.rows[index] = new ShortProduct(
                 value.product_id,
@@ -36,10 +37,7 @@ productRouter.get("/", async (req, res): Promise<void> => {
                 value.category,
                 value.preview,
                 value.price,
-                new Rating(
-                    value.rating,
-                    value.rating_ct
-                )
+                new Rating(value.rating, value.rating_ct)
             )
         })
         res.json(result.rows)
@@ -72,28 +70,31 @@ productRouter.get("/:id", async (req, res): Promise<void> => {
             FROM products
             WHERE product_id = $1
             `,
-            [productId])
+            [productId]
+        )
         if (result.rows.length < 1) {
             res.status(404).send("Product not found")
             return
         }
         const product = result.rows[0]
-        res.json(new Product(
-            product.product_id,
-            product.name,
-            product.category,
-            product.description,
-            product.company,
-            product.temp,
-            product.size,
-            product.country,
-            new DateObject(product.expiry),
-            product.stock,
-            product.preview,
-            product.images,
-            product.price,
-            new Rating(product.rating, product.rating_ct)
-        ))
+        res.json(
+            new Product(
+                product.product_id,
+                product.name,
+                product.category,
+                product.description,
+                product.company,
+                product.temp,
+                product.size,
+                product.country,
+                new DateObject(product.expiry),
+                product.stock,
+                product.preview,
+                product.images,
+                product.price,
+                new Rating(product.rating, product.rating_ct)
+            )
+        )
     } catch (err) {
         handleQueryError(err, res)
     }
@@ -151,7 +152,8 @@ productRouter.get("/:id/ratings", async (req, res): Promise<void> => {
     }
 })
 
-productRouter.post("/:id/ratings",
+productRouter.post(
+    "/:id/ratings",
     authenticate,
     async (req, res): Promise<void> => {
         const data = req.body || {}
@@ -182,12 +184,14 @@ productRouter.post("/:id/ratings",
                 return
             }
 
-            result = await pool.query(`
+            result = await pool.query(
+                `
                     UPDATE products
                     SET rating = rating + $1, rating_ct = rating_ct + 1
                     WHERE product_id = $2
                 `,
-                [rating, req.params.id])
+                [rating, req.params.id]
+            )
             if (result.rowCount) {
                 res.json(
                     new Review(

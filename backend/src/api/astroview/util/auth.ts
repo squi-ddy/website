@@ -6,7 +6,11 @@ import { QueryResult } from "pg"
 
 const pool = getPool("astroview")
 
-async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function authenticate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> {
     const authorisation = req.headers.authorization || ""
     const params = authorisation.split(" ")
     if (params.length != 2 || params[0] != "Basic") {
@@ -16,7 +20,7 @@ async function authenticate(req: Request, res: Response, next: NextFunction): Pr
     let username: string
     let password: string
     try {
-        const decoded = Buffer.from(params[1], 'base64').toString()
+        const decoded = Buffer.from(params[1], "base64").toString()
         ;[username, password] = decoded.split(":")
         if (username === null || password === null) {
             res.status(401).send("Unauthorised")
@@ -28,10 +32,9 @@ async function authenticate(req: Request, res: Response, next: NextFunction): Pr
     }
     let result: QueryResult
     try {
-        result = await pool.query(
-            "SELECT hash FROM users WHERE name=$1",
-            [username]
-        )
+        result = await pool.query("SELECT hash FROM users WHERE name=$1", [
+            username
+        ])
     } catch (err) {
         return handleQueryError(err, res)
     }

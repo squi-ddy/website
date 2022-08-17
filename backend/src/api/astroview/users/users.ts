@@ -6,7 +6,8 @@ import { QueryResult } from "pg"
 const userRouter = express.Router()
 const pool = getPool("astroview")
 
-userRouter.get("/:name",
+userRouter.get(
+    "/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -26,54 +27,51 @@ userRouter.get("/:name",
     }
 )
 
-userRouter.post("/:name",
-    async (req, res): Promise<void> => {
-        const name = req.params.name || ""
-        const password = String(req.body.password || "")
-        if (name.length > 30 || name == "" || password == "") {
-            res.status(400).send("Invalid parameters")
-            return
-        }
-        let result: QueryResult
-        try {
-            result = await pool.query(
-                "SELECT name FROM users WHERE name=$1",
-                [name]
-            )
-        } catch (err) {
-            return handleQueryError(err, res)
-        }
-        if (result.rowCount > 0) {
-            res.status(400).send("User already exists")
-            return
-        }
-        const passwordSaltedHash = await genSaltedHash(password)
-        let insertionResult: QueryResult
-        try {
-            insertionResult = await pool.query(
-                "INSERT INTO users VALUES ($1, $2) RETURNING name",
-                [name, passwordSaltedHash]
-            )
-        } catch (err) {
-            return handleQueryError(err, res)
-        }
-        if (insertionResult.rows.length < 1) {
-            res.status(400).send("User already exists")
-            return
-        }
-        res.json(insertionResult.rows[0])
+userRouter.post("/:name", async (req, res): Promise<void> => {
+    const name = req.params.name || ""
+    const password = String(req.body.password || "")
+    if (name.length > 30 || name == "" || password == "") {
+        res.status(400).send("Invalid parameters")
+        return
     }
-)
+    let result: QueryResult
+    try {
+        result = await pool.query("SELECT name FROM users WHERE name=$1", [
+            name
+        ])
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (result.rowCount > 0) {
+        res.status(400).send("User already exists")
+        return
+    }
+    const passwordSaltedHash = await genSaltedHash(password)
+    let insertionResult: QueryResult
+    try {
+        insertionResult = await pool.query(
+            "INSERT INTO users VALUES ($1, $2) RETURNING name",
+            [name, passwordSaltedHash]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (insertionResult.rows.length < 1) {
+        res.status(400).send("User already exists")
+        return
+    }
+    res.json(insertionResult.rows[0])
+})
 
-userRouter.delete("/:name",
+userRouter.delete(
+    "/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
         try {
-            const result = await pool.query(
-                "DELETE FROM users WHERE name=$1",
-                [req.params.name]
-            )
+            const result = await pool.query("DELETE FROM users WHERE name=$1", [
+                req.params.name
+            ])
             if (result.rowCount < 1) {
                 res.status(404).send("User not found")
                 return
@@ -85,7 +83,8 @@ userRouter.delete("/:name",
     }
 )
 
-userRouter.patch("/:name",
+userRouter.patch(
+    "/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -99,11 +98,15 @@ userRouter.patch("/:name",
         await modifyPassword(password, req, res)
         if (res.writableEnded) return
 
-        res.json({name: req.params.name})
+        res.json({ name: req.params.name })
     }
 )
 
-async function modifyPassword(password: string, req: Request, res: Response): Promise<void> {
+async function modifyPassword(
+    password: string,
+    req: Request,
+    res: Response
+): Promise<void> {
     const passwordSaltedHash = await genSaltedHash(password)
     let updateResult: QueryResult
     try {

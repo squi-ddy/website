@@ -7,7 +7,8 @@ import User from "../types/user"
 const userRouter = express.Router()
 const pool = getPool("supervend")
 
-userRouter.get("/:name",
+userRouter.get(
+    "/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -20,67 +21,60 @@ userRouter.get("/:name",
                 res.status(404).send("User not found")
                 return
             }
-            res.json(new User(
-                result.rows[0].name,
-                result.rows[0].wallet
-            ))
+            res.json(new User(result.rows[0].name, result.rows[0].wallet))
         } catch (err) {
             handleQueryError(err, res)
         }
     }
 )
 
-userRouter.post("/:name",
-    async (req, res): Promise<void> => {
-        const name = req.params.name || ""
-        const password = String(req.body.password || "")
-        if (name.length > 30 || name == "" || password == "") {
-            res.status(400).send("Invalid parameters")
-            return
-        }
-        let result: QueryResult
-        try {
-            result = await pool.query(
-                "SELECT name FROM users WHERE name=$1",
-                [name]
-            )
-        } catch (err) {
-            return handleQueryError(err, res)
-        }
-        if (result.rowCount > 0) {
-            res.status(400).send("User already exists")
-            return
-        }
-        const passwordSaltedHash = await genSaltedHash(password)
-        let insertionResult: QueryResult
-        try {
-            insertionResult = await pool.query(
-                "INSERT INTO users VALUES ($1, $2) RETURNING name, wallet",
-                [name, passwordSaltedHash]
-            )
-        } catch (err) {
-            return handleQueryError(err, res)
-        }
-        if (insertionResult.rows.length < 1) {
-            res.status(400).send("User already exists")
-            return
-        }
-        res.json(new User(
-            insertionResult.rows[0].name,
-            insertionResult.rows[0].wallet
-        ))
+userRouter.post("/:name", async (req, res): Promise<void> => {
+    const name = req.params.name || ""
+    const password = String(req.body.password || "")
+    if (name.length > 30 || name == "" || password == "") {
+        res.status(400).send("Invalid parameters")
+        return
     }
-)
+    let result: QueryResult
+    try {
+        result = await pool.query("SELECT name FROM users WHERE name=$1", [
+            name
+        ])
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (result.rowCount > 0) {
+        res.status(400).send("User already exists")
+        return
+    }
+    const passwordSaltedHash = await genSaltedHash(password)
+    let insertionResult: QueryResult
+    try {
+        insertionResult = await pool.query(
+            "INSERT INTO users VALUES ($1, $2) RETURNING name, wallet",
+            [name, passwordSaltedHash]
+        )
+    } catch (err) {
+        return handleQueryError(err, res)
+    }
+    if (insertionResult.rows.length < 1) {
+        res.status(400).send("User already exists")
+        return
+    }
+    res.json(
+        new User(insertionResult.rows[0].name, insertionResult.rows[0].wallet)
+    )
+})
 
-userRouter.delete("/:name",
+userRouter.delete(
+    "/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
         try {
-            const result = await pool.query(
-                "DELETE FROM users WHERE name=$1",
-                [req.params.name]
-            )
+            const result = await pool.query("DELETE FROM users WHERE name=$1", [
+                req.params.name
+            ])
             if (result.rowCount < 1) {
                 res.status(404).send("User not found")
                 return
@@ -92,7 +86,8 @@ userRouter.delete("/:name",
     }
 )
 
-userRouter.patch("/:name",
+userRouter.patch(
+    "/:name",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -128,14 +123,15 @@ userRouter.patch("/:name",
             res.status(404).send("User not found")
             return
         }
-        res.json(new User(
-            result.rows[0].name,
-            result.rows[0].wallet
-        ))
+        res.json(new User(result.rows[0].name, result.rows[0].wallet))
     }
 )
 
-async function modifyPassword(password: string, req: Request, res: Response): Promise<void> {
+async function modifyPassword(
+    password: string,
+    req: Request,
+    res: Response
+): Promise<void> {
     const passwordSaltedHash = await genSaltedHash(password)
     let updateResult: QueryResult
     try {
@@ -151,7 +147,11 @@ async function modifyPassword(password: string, req: Request, res: Response): Pr
     }
 }
 
-async function depositMoney(amount: number, req: Request, res: Response): Promise<void> {
+async function depositMoney(
+    amount: number,
+    req: Request,
+    res: Response
+): Promise<void> {
     let updateResult: QueryResult
     try {
         updateResult = await pool.query(
@@ -166,7 +166,8 @@ async function depositMoney(amount: number, req: Request, res: Response): Promis
     }
 }
 
-userRouter.post("/:name/buy",
+userRouter.post(
+    "/:name/buy",
     authenticate,
     checkName,
     async (req, res): Promise<void> => {
@@ -178,11 +179,11 @@ userRouter.post("/:name/buy",
         }
 
         // sum up totals
-        const [total, orders] = await sumOrder(data, req, res) || [0, []]
+        const [total, orders] = (await sumOrder(data, req, res)) || [0, []]
         if (res.writableEnded) return
 
         // update wallet
-        const balance = await updateWallet(total, req, res) || 0
+        const balance = (await updateWallet(total, req, res)) || 0
         if (res.writableEnded) return
 
         // update products
@@ -190,16 +191,17 @@ userRouter.post("/:name/buy",
         if (res.writableEnded) return
 
         res.json({
-            "total": total,
-            "balance": balance,
-            "order": data
+            total: total,
+            balance: balance,
+            order: data
         })
     }
 )
 
 async function sumOrder(
-    data: { quantity: unknown, product_id: unknown }[],
-    _req: Request, res: Response
+    data: { quantity: unknown; product_id: unknown }[],
+    _req: Request,
+    res: Response
 ): Promise<void | [number, Array<[number, string]>]> {
     let total = 0
     const orders: Array<[number, string]> = []
@@ -226,7 +228,7 @@ async function sumOrder(
             res.status(404).send("Product not found")
             return
         }
-        const {price, stock} = productResult.rows[0]
+        const { price, stock } = productResult.rows[0]
         if (stock < quantity) {
             res.status(400).send("Not enough stock")
             return
@@ -237,7 +239,11 @@ async function sumOrder(
     return [total, orders]
 }
 
-async function updateWallet(total: number, req: Request, res: Response): Promise<void | number> {
+async function updateWallet(
+    total: number,
+    req: Request,
+    res: Response
+): Promise<void | number> {
     let walletResult: QueryResult
     try {
         walletResult = await pool.query(
@@ -277,7 +283,10 @@ async function updateWallet(total: number, req: Request, res: Response): Promise
     return balance
 }
 
-async function updateStock(orders: Array<[number, string]>, res: Response): Promise<void> {
+async function updateStock(
+    orders: Array<[number, string]>,
+    res: Response
+): Promise<void> {
     for (const [quantity, productId] of orders) {
         try {
             const result = await pool.query(

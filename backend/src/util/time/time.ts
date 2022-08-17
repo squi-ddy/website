@@ -20,8 +20,13 @@ function getUTCDateTime(): DateTime {
 
 function dateTimeToJSDate(datetime: DateTime): Date {
     // very funny workaround because JS date
-    return DateTime.fromObject(datetime.toObject(), {zone: "utc"}).toJSDate()
+    return DateTime.fromObject(datetime.toObject(), { zone: "utc" }).toJSDate()
 }
 
-
-export { getLocalTime, getUTCTime, getLocalDateTime, getUTCDateTime, dateTimeToJSDate }
+export {
+    getLocalTime,
+    getUTCTime,
+    getLocalDateTime,
+    getUTCDateTime,
+    dateTimeToJSDate
+}

@@ -8,16 +8,15 @@ import { getLocalTime } from "../../../util/time/time"
 const starRouter = express.Router()
 const pool = getPool("astroview")
 
-starRouter.get("/:starNum/ratings",
-    async (req, res): Promise<void> => {
-        const starNumber = parseInt(req.params.starNum, 10)
-        if (isNaN(starNumber) || starNumber <= 0) {
-            res.status(400).send("Invalid star number")
-            return
-        }
-        try {
-            const result = await pool.query(
-                `
+starRouter.get("/:starNum/ratings", async (req, res): Promise<void> => {
+    const starNumber = parseInt(req.params.starNum, 10)
+    if (isNaN(starNumber) || starNumber <= 0) {
+        res.status(400).send("Invalid star number")
+        return
+    }
+    try {
+        const result = await pool.query(
+            `
                 SELECT
                     id,
                     star,
@@ -27,25 +26,25 @@ starRouter.get("/:starNum/ratings",
                 FROM star_ratings
                 WHERE star = $1
                 `,
-                [starNumber]
+            [starNumber]
+        )
+        result.rows.forEach((value, index) => {
+            result.rows[index] = new StarReview(
+                value.id,
+                value.name,
+                value.content,
+                new DateTimeObject(value.time),
+                value.star
             )
-            result.rows.forEach((value, index) => {
-                result.rows[index] = new StarReview(
-                    value.id,
-                    value.name,
-                    value.content,
-                    new DateTimeObject(value.time),
-                    value.star
-                )
-            })
-            res.json(result.rows)
-        } catch (err) {
-            handleQueryError(err, res)
-        }
+        })
+        res.json(result.rows)
+    } catch (err) {
+        handleQueryError(err, res)
     }
-)
+})
 
-starRouter.post("/:starNum/ratings",
+starRouter.post(
+    "/:starNum/ratings",
     authenticate,
     async (req, res): Promise<void> => {
         const starNumber = parseInt(req.params.starNum, 10)
@@ -79,7 +78,6 @@ starRouter.post("/:starNum/ratings",
         } catch (err) {
             handleQueryError(err, res)
         }
-
     }
 )
 
