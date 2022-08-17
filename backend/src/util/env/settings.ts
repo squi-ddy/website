@@ -10,8 +10,7 @@ class Settings {
         readonly STATIC_SITE_PROTOCOL: string,
         readonly OXFORD_API_ID: string,
         readonly OXFORD_API_KEY: string
-    ) {
-    }
+    ) {}
 }
 
 const settings = new Settings(

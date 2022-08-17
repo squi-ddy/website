@@ -4,6 +4,5 @@ export default class Page {
         readonly name: string,
         readonly file_name: string,
         readonly category: string
-    ) {
-    }
+    ) {}
 }

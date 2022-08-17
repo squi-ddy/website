@@ -28,5 +28,5 @@ export {
     getUTCTime,
     getLocalDateTime,
     getUTCDateTime,
-    dateTimeToJSDate
+    dateTimeToJSDate,
 }

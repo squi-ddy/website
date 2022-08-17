@@ -11,7 +11,7 @@ const supervend = new API(router, manifest)
 
 router.get("/", (_req, res) => {
     res.json({
-        api: manifest
+        api: manifest,
     })
 })
 

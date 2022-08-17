@@ -7,6 +7,5 @@ export default class StarReview {
         readonly description: string,
         readonly time: DateTimeObject,
         readonly star: number
-    ) {
-    }
+    ) {}
 }

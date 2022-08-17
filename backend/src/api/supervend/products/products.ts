@@ -106,8 +106,8 @@ productRouter.get("/:id/ratings", async (req, res): Promise<void> => {
         reviews: <Array<Review>>[],
         summary: {
             total: 0,
-            count: 0
-        }
+            count: 0,
+        },
     }
     try {
         let result = await pool.query(

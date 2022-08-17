@@ -7,6 +7,5 @@ export default class Review {
         readonly rating: number,
         readonly description: string,
         readonly time: DateTimeObject
-    ) {
-    }
+    ) {}
 }

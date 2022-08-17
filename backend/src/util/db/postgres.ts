@@ -14,7 +14,7 @@ function getPool(database: string): Pool {
         host: settings.DATABASE_HOST,
         database: database,
         password: settings.DATABASE_PASS,
-        port: settings.DATABASE_PORT
+        port: settings.DATABASE_PORT,
     })
     pools.set(database, pool)
     return pool

@@ -33,7 +33,7 @@ async function authenticate(
     let result: QueryResult
     try {
         result = await pool.query("SELECT hash FROM users WHERE name=$1", [
-            username
+            username,
         ])
     } catch (err) {
         return handleQueryError(err, res)

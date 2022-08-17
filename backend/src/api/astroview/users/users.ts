@@ -37,7 +37,7 @@ userRouter.post("/:name", async (req, res): Promise<void> => {
     let result: QueryResult
     try {
         result = await pool.query("SELECT name FROM users WHERE name=$1", [
-            name
+            name,
         ])
     } catch (err) {
         return handleQueryError(err, res)
@@ -70,7 +70,7 @@ userRouter.delete(
     async (req, res): Promise<void> => {
         try {
             const result = await pool.query("DELETE FROM users WHERE name=$1", [
-                req.params.name
+                req.params.name,
             ])
             if (result.rowCount < 1) {
                 res.status(404).send("User not found")

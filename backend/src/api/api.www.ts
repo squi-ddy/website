@@ -13,7 +13,7 @@ for (const api of apis) {
 
 apiRouter.get("/", (_req, res): void => {
     res.json({
-        apis: apis
+        apis: apis,
     })
 })
 
