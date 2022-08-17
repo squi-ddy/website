@@ -15,4 +15,4 @@
     </v-app>
 </template>
 
-<style lang="sass">@import "./assets/main.sass"</style>
+<style lang="scss">@import "./assets/main";</style>
