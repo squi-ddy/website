@@ -5,7 +5,7 @@
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
 
 .main {
   display: inline-flex;
@@ -18,6 +18,7 @@
 .main > h1 {
   font-family: 'Source Sans Pro', sans-serif;
 }
+
 </style>
 
 <style>
