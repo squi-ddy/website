@@ -1,7 +1,6 @@
 import LCSChances from "../types/lcsChances"
 import StartChances from "../types/startChances"
 import LCS from "../types/lcs"
-import { settings } from "../../../util/env/settings"
 
 function normaliseChances(chances: LCSChances): LCSChances {
     for (const chanceArray of chances.chancesArray) {
