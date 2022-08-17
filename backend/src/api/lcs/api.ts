@@ -1,7 +1,7 @@
 import express from "express"
 import { getPool, handleQueryError } from "../../util/db/postgres"
 import lcsWordChances from "./data/lcsWordChances"
-import { getDictionaryHeaders, getDictionaryLink, indexLCS, normaliseChances, selectFromChances } from "./util/util"
+import { indexLCS, normaliseChances, selectFromChances } from "./util/util"
 import { getStaticUrl } from "../../util/static/static"
 import axios from "axios"
 import LCS from "./types/lcs"
@@ -26,19 +26,8 @@ async function generateLCS(): Promise<LCS> {
             throw new Error("Error generating LCS: Failed get on txt file")
         }
         let words = String(wordsResponse.data).split('\n')
-        let wordFound = false
-        while (!wordFound) {
-            const word = words[Math.floor(Math.random() * words.length)]
-            // check if dictionary api thinks this is a real word
-            try {
-                await axios.get(getDictionaryLink(word), {headers: getDictionaryHeaders()})
-                wordFound = true
-                chosenWords.push(word)
-            } catch (e) {
-                // ignore
-                words = words.filter(item => item !== word)
-            }
-        }
+        const word = words[Math.floor(Math.random() * words.length)]
+        chosenWords.push(word)
     }
 
     return new LCS(chosenWords)

@@ -42,15 +42,4 @@ function indexLCS(lcs: LCS, index: number): string {
     }
 }
 
-function getDictionaryLink(word: string): string {
-    return `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${word}`
-}
-
-function getDictionaryHeaders(): { app_id: string, app_key: string } {
-    return {
-        app_id: settings.OXFORD_API_ID,
-        app_key: settings.OXFORD_API_KEY
-    }
-}
-
-export { normaliseChances, selectFromChances, indexLCS, getDictionaryLink, getDictionaryHeaders }
+export { normaliseChances, selectFromChances, indexLCS }
