@@ -28,7 +28,10 @@ async function generateLCS(): Promise<LCS> {
             throw new Error("Error generating LCS: Failed get on txt file")
         }
         const words = String(wordsResponse.data).split("\n")
-        const word = words[Math.floor(Math.random() * words.length)]
+        let word
+        do {
+            word = words[Math.floor(Math.random() * words.length)]
+        } while (word.length != 0)
         chosenWords.push(word)
     }
 
