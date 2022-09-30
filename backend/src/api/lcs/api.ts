@@ -31,7 +31,7 @@ async function generateLCS(): Promise<LCS> {
         let word
         do {
             word = words[Math.floor(Math.random() * words.length)]
-        } while (word.length != 0)
+        } while (word.length === 0)
         chosenWords.push(word)
     }
 
