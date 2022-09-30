@@ -6,7 +6,7 @@ WORKDIR /app/
 
 # install deps
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm i -P --frozen-lockfile
+RUN pnpm i -P
 
 # build
 COPY . .
