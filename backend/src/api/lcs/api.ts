@@ -7,7 +7,7 @@ import axios from "axios"
 import LCS from "./types/lcs"
 import LCSMeaning from "./types/lcsMeaning"
 import { getLocalDateTime } from "../../util/time/time"
-import { Duration } from "luxon"
+import { DateTime, Duration } from "luxon"
 import Meaning from "./types/meaning"
 
 const lcsRouter = express.Router()
@@ -97,6 +97,47 @@ async function getLCS(): Promise<LCSMeaning | null> {
     return new LCSMeaning(meanings, time.toISODate(), id, checkNext.toISO())
 }
 
+async function getLCSByIndex(
+    index: number
+): Promise<LCSMeaning | null | undefined> {
+    let result
+    try {
+        result = await pool.query(
+            `
+            SELECT
+                l,
+                c,
+                s,
+                sus,
+                day
+            FROM history
+            WHERE id=$1
+            `,
+            [index]
+        )
+    } catch (e) {
+        return null
+    }
+
+    if (result.rows.length === 0) {
+        return undefined
+    }
+
+    const lcs = result.rows[0] as LCS
+    const date: Date = result.rows[0].day
+
+    const day = DateTime.fromJSDate(date).toISODate()
+
+    const meanings = Array<Meaning>()
+    for (let i = 0; i < 4; i++) {
+        const word = indexLCS(lcs, i)
+
+        meanings.push(new Meaning(word))
+    }
+
+    return new LCSMeaning(meanings, day, index)
+}
+
 lcsRouter.get("/", async (_req, res) => {
     const lcs = await getLCS()
     if (lcs === null) {
@@ -107,9 +148,34 @@ lcsRouter.get("/", async (_req, res) => {
     }
 })
 
+lcsRouter.get("/:id(\\d+)", async (req, res) => {
+    console.log(req.params.id)
+    const lcs = await getLCSByIndex(parseInt(req.params.id || "0"))
+    if (lcs === undefined) {
+        res.status(404).send("Invalid LCS id")
+    } else if (lcs === null) {
+        handleQueryError(new Error("DB error"), res)
+    } else {
+        delete (lcs as { sus?: Meaning }).sus
+        res.json(lcs)
+    }
+})
+
 lcsRouter.get("/us", async (_req, res) => {
     const lcs = await getLCS()
     if (lcs === null) {
+        handleQueryError(new Error("DB error"), res)
+    } else {
+        delete (lcs as { s?: Meaning }).s
+        res.json(lcs)
+    }
+})
+
+lcsRouter.get("/us/:id(\\d+)", async (req, res) => {
+    const lcs = await getLCSByIndex(parseInt(req.params.id || "0"))
+    if (lcs === undefined) {
+        res.status(404).send("Invalid LCS id")
+    } else if (lcs === null) {
         handleQueryError(new Error("DB error"), res)
     } else {
         delete (lcs as { s?: Meaning }).s

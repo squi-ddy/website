@@ -1,16 +1,21 @@
 {
-    "extends": "@vue/tsconfig/tsconfig.web.json",
-    "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
     "compilerOptions": {
-        "baseUrl": "./Website",
-        "paths": {
-            "@/*": ["./src/*"]
-        },
-        "strict": true
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx"
     },
-    "references": [
-        {
-            "path": "./tsconfig.vite-config.json"
-        }
-    ]
+    "include": ["x/x/src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }

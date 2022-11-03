@@ -1,4 +1,4 @@
 #!/bin/sh
 
-yarn --cwd backend run precommit
-yarn --cwd frontend run precommit
+pnpm --dir backend run precommit
+pnpm --dir frontend run precommit
