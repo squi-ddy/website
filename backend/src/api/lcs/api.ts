@@ -91,7 +91,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
 
     const checkNext = time
         .startOf("day")
-        .plus(Duration.fromObject({ days: 1, minutes: 2 }))
+        .plus(Duration.fromObject({ days: 1, seconds: 15 }))
         .plus(rolloverOffset)
 
     return new LCSMeaning(meanings, time.toISODate(), id, checkNext.toISO())
