@@ -143,7 +143,6 @@ lcsRouter.get("/", async (_req, res) => {
     if (lcs === null) {
         handleQueryError(new Error("DB error"), res)
     } else {
-        delete (lcs as { sus?: Meaning }).sus
         res.json(lcs)
     }
 })
@@ -156,29 +155,6 @@ lcsRouter.get("/:id(\\d+)", async (req, res) => {
     } else if (lcs === null) {
         handleQueryError(new Error("DB error"), res)
     } else {
-        delete (lcs as { sus?: Meaning }).sus
-        res.json(lcs)
-    }
-})
-
-lcsRouter.get("/us", async (_req, res) => {
-    const lcs = await getLCS()
-    if (lcs === null) {
-        handleQueryError(new Error("DB error"), res)
-    } else {
-        delete (lcs as { s?: Meaning }).s
-        res.json(lcs)
-    }
-})
-
-lcsRouter.get("/us/:id(\\d+)", async (req, res) => {
-    const lcs = await getLCSByIndex(parseInt(req.params.id || "0"))
-    if (lcs === undefined) {
-        res.status(404).send("Invalid LCS id")
-    } else if (lcs === null) {
-        handleQueryError(new Error("DB error"), res)
-    } else {
-        delete (lcs as { s?: Meaning }).s
         res.json(lcs)
     }
 })
