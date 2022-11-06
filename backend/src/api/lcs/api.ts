@@ -148,7 +148,6 @@ lcsRouter.get("/", async (_req, res) => {
 })
 
 lcsRouter.get("/:id(\\d+)", async (req, res) => {
-    console.log(req.params.id)
     const lcs = await getLCSByIndex(parseInt(req.params.id || "0"))
     if (lcs === undefined) {
         res.status(404).send("Invalid LCS id")
