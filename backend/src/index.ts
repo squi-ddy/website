@@ -11,8 +11,8 @@ const port = settings.PORT
 const domain = settings.DOMAIN
 const server = http.createServer(app)
 
-app.use(compression())
 app.use(helmet())
+app.use(compression())
 app.use(bodyParser.json())
 
 app.use("/", apiRouter)
