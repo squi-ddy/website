@@ -4,6 +4,7 @@ import http from "http"
 import express from "express"
 import bodyParser from "body-parser"
 import compression from "compression"
+import helmet from "helmet"
 
 const app = express()
 const port = settings.PORT
@@ -12,6 +13,7 @@ const server = http.createServer(app)
 
 app.use(bodyParser.json())
 app.use(compression())
+app.use(helmet())
 
 app.use("/", apiRouter)
 
