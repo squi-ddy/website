@@ -25,7 +25,7 @@ async function generateLCS(): Promise<LCS> {
                 getStaticUrl("lcs", [`${startsWith}.txt`])
             )
         } catch (e) {
-            throw new Error("Error generating LCS: Failed get on txt file")
+            throw new Error(`Error generating LCS: Failed get on ${startsWith} txt file`)
         }
         const words = String(wordsResponse.data).split("\n")
         let word
