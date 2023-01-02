@@ -13,7 +13,7 @@
     },
     "license": "ISC",
     "dependencies": {
-        "esbuild": "^0.15.13",
+        "esbuild": "^0.16.12",
         "esbuild-node-tsc": "^2.0.4",
         "http-server": "^14.1.1",
         "react": "^18.2.0",
