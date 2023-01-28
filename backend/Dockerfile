@@ -1,6 +1,6 @@
 FROM node:alpine AS base
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm node-gyp
 
 FROM base AS dependencies
 
