@@ -1,15 +1,26 @@
-FROM node:latest
+FROM node:alpine AS base
 
-RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
+RUN npm i -g pnpm
+
+FROM base AS dependencies
 
 WORKDIR /app/
-
-# install deps
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm i -P
 
-# build
-COPY . .
-RUN pnpm run build
+FROM base AS build
 
-CMD pnpm start
+WORKDIR /app/
+COPY . .
+COPY --from=dependencies /app/node_modules ./node_modules
+RUN pnpm run build
+RUN pnpm prune --prod
+
+FROM base AS deploy
+
+WORKDIR /app/
+COPY package.json pnpm-lock.yaml ./
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+
+CMD ["pnpm", "start"]
