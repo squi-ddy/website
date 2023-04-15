@@ -4,8 +4,12 @@ import { api } from "../util/axios"
 function PromptArtistry() {
     const imageInputRef: MutableRefObject<HTMLInputElement | null> = useRef(null)
     const [imageURL, setImageURL] = useState<string | null>(null)
-    const [sentImage, setSentImage] = useState<boolean>(true)
+    const [sentImage, setSentImage] = useState<boolean>(false)
     const [imagePending, setImagePending] = useState<boolean>(true)
+    const [probability, setProbability] = useState<number>(0)
+    const [prompt, setPrompt] = useState<string>("")
+    const [timeTaken, setTimeTaken] = useState<number>(0)
+    const [error, setError] = useState<boolean>(false)
 
     return (
         <div className="flex">
@@ -45,7 +49,13 @@ function PromptArtistry() {
                                         api.post("/prompt-artistry/submit", {
                                             "image": data
                                         }).then((resp) => {
-                                            console.log(resp)
+                                            setProbability(resp.data.probability)
+                                            setPrompt(resp.data.prompt || "")
+                                            setTimeTaken(resp.data.time)
+                                            setImagePending(false)
+                                        }).catch((err) => {
+                                            console.log(err)
+                                            setError(true)
                                             setImagePending(false)
                                         })
                                     }
@@ -58,7 +68,14 @@ function PromptArtistry() {
             </div>
             <div className="flex basis-0 grow justify-center p-2">
                 {sentImage && <div className="flex grow justify-center items-center rounded bg-stone-900 p-2 flex-col h-fit">
-                    {imagePending && <div className="animate-pulse">AI is thinking...</div>}
+                    {imagePending ? <div className="animate-pulse">AI is thinking...</div> : error ? <p className="font-semibold">An error occurred. Please try again.</p> : 
+                    <>
+                        <h1 className="text-xl">This image is {probability < 0.5 ? <text className="text-red-500 font-semibold">fake</text> : <text className="text-green-500 font-semibold">real</text>}!</h1>
+                        <p className="text-l">There is a <text className="font-semibold">{(probability * 100).toFixed(1)}%</text> chance that this image is real.</p>
+                        {prompt !== "" && <p className="text-l text-center">A likely prompt is <i className="font-semibold">"{prompt}"</i></p>}
+                        <div className="h-2" />
+                        <i className="text-sm text-stone-500">Result generated in {timeTaken.toFixed(3)}s</i>
+                    </>}
                 </div>}
             </div>
         </div>
