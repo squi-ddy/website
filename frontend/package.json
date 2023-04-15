@@ -12,6 +12,7 @@
         "start": "http-server -p 8000 dist"
     },
     "license": "ISC",
+    "homepage": "https://squiddy.me/",
     "dependencies": {
         "esbuild": "^0.17.6",
         "esbuild-node-tsc": "^2.0.4",
