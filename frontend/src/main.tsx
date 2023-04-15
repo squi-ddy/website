@@ -17,6 +17,14 @@ const router = createBrowserRouter(
 
                 </BasePage>
             )
+        },
+        {
+            path: "/prompt-artistry",
+            element: (
+                <BasePage title="Prompt Artistry">
+
+                </BasePage>
+            )
         }
     ]
 )
