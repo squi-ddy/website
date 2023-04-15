@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 
-function BasePage(props: { title: string, children?: React.ReactNode }) {
+function BasePage(props: { title: string; children?: React.ReactNode }) {
     useEffect(() => {
         document.title = props.title
     }, [props.title])
