@@ -6,6 +6,7 @@ import {
     Route
 } from "react-router-dom";
 import BasePage from "./components/BasePage"
+import PromptArtistry from "./components/PromptArtistry"
 import "./index.css"
 
 const router = createBrowserRouter(
@@ -22,7 +23,7 @@ const router = createBrowserRouter(
             path: "/prompt-artistry",
             element: (
                 <BasePage title="Prompt Artistry">
-
+                    <PromptArtistry />
                 </BasePage>
             )
         }

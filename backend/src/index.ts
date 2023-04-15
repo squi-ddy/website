@@ -15,7 +15,7 @@ const server = http.createServer(app)
 app.use(cors())
 app.use(helmet())
 app.use(compression())
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: "50mb" }))
 
 app.use("/", apiRouter)
 
