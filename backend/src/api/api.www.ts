@@ -18,8 +18,4 @@ apiRouter.get("/", (_req, res): void => {
     })
 })
 
-apiRouter.post("/bot_login", (_req, res): void => {
-    console.log(_req.body)
-})
-
 export { apiRouter }
