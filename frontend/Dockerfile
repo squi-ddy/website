@@ -18,11 +18,9 @@ COPY --from=dependencies /app/node_modules ./node_modules
 RUN pnpm run build
 RUN pnpm prune --prod
 
-FROM base AS deploy
+FROM busybox:musl AS deploy
 
 WORKDIR /app/
-COPY package.json pnpm-lock.yaml ./
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist .
 
-CMD ["pnpm", "start"]
+CMD ["busybox", "httpd", "-f", "-v", "-p", "3001"]
