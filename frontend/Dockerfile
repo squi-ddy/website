@@ -16,11 +16,10 @@ WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN pnpm run build
-RUN pnpm prune --prod
 
 FROM busybox:musl AS deploy
 
 WORKDIR /app/
 COPY --from=build /app/dist .
 
-CMD ["busybox", "httpd", "-f", "-v", "-p", "3001"]
+CMD ["busybox", "httpd", "-f", "-v", "-p", "8000"]
