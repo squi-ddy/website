@@ -2,7 +2,7 @@
     "name": "backend",
     "version": "0.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "dist/index.js",
     "scripts": {
         "start": "NODE_ENV=production node dist/index.js",
         "build": "esbuild src/index.ts --packages=external --platform=node --loader:.html=file --bundle --outfile=dist/index.js",
