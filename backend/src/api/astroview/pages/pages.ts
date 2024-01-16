@@ -22,7 +22,7 @@ pageRouter.get("/", async (_req, res): Promise<void> => {
                     file_name,
                     category
                 FROM pages
-                `
+                `,
         )
         for (const row of result.rows) {
             if (!pages.has(row.category)) {
@@ -34,7 +34,7 @@ pageRouter.get("/", async (_req, res): Promise<void> => {
                 return
             }
             pagesInCategory.push(
-                new Page(row.id, row.name, row.file_name, row.category)
+                new Page(row.id, row.name, row.file_name, row.category),
             )
         }
         res.json(Object.fromEntries(pages))
@@ -52,14 +52,14 @@ pageRouter.get("/number/:pageNum", async (req, res): Promise<void> => {
     try {
         const result = await pool.query(
             "SELECT id, name, file_name, category FROM pages WHERE id = $1",
-            [pageNumber]
+            [pageNumber],
         )
         result.rows.forEach((value, index) => {
             result.rows[index] = new Page(
                 value.id,
                 value.name,
                 value.file_name,
-                value.category
+                value.category,
             )
         })
         res.json(result.rows)
@@ -77,11 +77,11 @@ pageRouter.get("/number/:pageNum/link", async (req, res): Promise<void> => {
     try {
         const result = await pool.query(
             "SELECT file_name FROM pages WHERE id = $1",
-            [pageNumber]
+            [pageNumber],
         )
         if (result.rows) {
             res.redirect(
-                getStaticUrl("astroview", ["pages", result.rows[0].file_name])
+                getStaticUrl("astroview", ["pages", result.rows[0].file_name]),
             )
             return
         }
@@ -109,7 +109,7 @@ pageRouter.get("/:pageNum/ratings", async (req, res): Promise<void> => {
                 FROM page_ratings
                 WHERE page = $1
                 `,
-            [pageNumber]
+            [pageNumber],
         )
         result.rows.forEach((value, index) => {
             result.rows[index] = new PageReview(
@@ -117,7 +117,7 @@ pageRouter.get("/:pageNum/ratings", async (req, res): Promise<void> => {
                 value.name,
                 value.content,
                 new DateTimeObject(value.time),
-                value.page
+                value.page,
             )
         })
         res.json(result.rows)
@@ -143,7 +143,7 @@ pageRouter.post(
         try {
             const result = await pool.query(
                 "INSERT INTO page_ratings(name, content, time, page) VALUES ($1, $2, $3, $4) RETURNING id",
-                [name, content, time, pageNumber]
+                [name, content, time, pageNumber],
             )
             if (result.rows.length) {
                 res.json(
@@ -152,8 +152,8 @@ pageRouter.post(
                         name,
                         content,
                         new DateTimeObject(time),
-                        pageNumber
-                    )
+                        pageNumber,
+                    ),
                 )
             } else {
                 res.status(400).send("Invalid parameters")
@@ -161,7 +161,7 @@ pageRouter.post(
         } catch (err) {
             handleQueryError(err, res)
         }
-    }
+    },
 )
 
 export { pageRouter }

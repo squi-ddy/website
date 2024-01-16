@@ -22,11 +22,11 @@ async function generateLCS(): Promise<LCS> {
         let wordsResponse
         try {
             wordsResponse = await axios.get(
-                getStaticUrl("lcs", [`${startsWith}.txt`])
+                getStaticUrl("lcs", [`${startsWith}.txt`]),
             )
         } catch (e) {
             throw new Error(
-                `Error generating LCS: Failed get on ${startsWith} txt file`
+                `Error generating LCS: Failed get on ${startsWith} txt file`,
             )
         }
         const words = String(wordsResponse.data).split("\n")
@@ -58,7 +58,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
             FROM history
             WHERE day=$1
             `,
-            [date]
+            [date],
         )
     } catch (e) {
         return null
@@ -74,7 +74,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
         try {
             const insertResult = await pool.query(
                 `INSERT INTO history(day, l, c, s, sus) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-                [date, lcs.l, lcs.c, lcs.s, lcs.sus]
+                [date, lcs.l, lcs.c, lcs.s, lcs.sus],
             )
             if (insertResult.rows.length === 0) return null
             id = insertResult.rows[0].id
@@ -96,11 +96,11 @@ async function getLCS(): Promise<LCSMeaning | null> {
         .plus(Duration.fromObject({ days: 1, seconds: 15 }))
         .plus(rolloverOffset)
 
-    return new LCSMeaning(meanings, time.toISODate(), id, checkNext.toISO())
+    return new LCSMeaning(meanings, time.toISODate()!, id, checkNext.toISO()!)
 }
 
 async function getLCSByIndex(
-    index: number
+    index: number,
 ): Promise<LCSMeaning | null | undefined> {
     let result
     try {
@@ -115,7 +115,7 @@ async function getLCSByIndex(
             FROM history
             WHERE id=$1
             `,
-            [index]
+            [index],
         )
     } catch (e) {
         return null
@@ -128,7 +128,7 @@ async function getLCSByIndex(
     const lcs = result.rows[0] as LCS
     const date: Date = result.rows[0].day
 
-    const day = DateTime.fromJSDate(date).toISODate()
+    const day = DateTime.fromJSDate(date).toISODate()!
 
     const meanings = Array<Meaning>()
     for (let i = 0; i < 4; i++) {

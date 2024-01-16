@@ -12,7 +12,7 @@ categoryRouter.get("/", async (_req, res): Promise<void> => {
                     short_name,
                     full_name
                 FROM categories
-                `
+                `,
         )
         res.json(result.rows)
     } catch (err) {

@@ -7,6 +7,6 @@ export default class ShortProduct {
         readonly category: string,
         readonly preview: string,
         readonly price: number,
-        readonly rating: Rating
+        readonly rating: Rating,
     ) {}
 }

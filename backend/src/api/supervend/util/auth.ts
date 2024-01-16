@@ -9,7 +9,7 @@ const pool = getPool("supervend")
 async function authenticate(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ): Promise<void> {
     const authorisation = req.headers.authorization || ""
     const params = authorisation.split(" ")
@@ -38,7 +38,7 @@ async function authenticate(
     } catch (err) {
         return handleQueryError(err, res)
     }
-    if (result.rowCount < 1) {
+    if (!result.rowCount) {
         res.status(400).send("User not found")
         return
     }

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-pnpm --dir backend run precommit
-pnpm --dir frontend run precommit
+npm --prefix backend run precommit
+npm --prefix frontend run precommit

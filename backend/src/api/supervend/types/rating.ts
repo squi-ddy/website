@@ -1,3 +1,6 @@
 export default class Rating {
-    constructor(readonly total: number, readonly count: number) {}
+    constructor(
+        readonly total: number,
+        readonly count: number,
+    ) {}
 }

@@ -26,7 +26,7 @@ starRouter.get("/:starNum/ratings", async (req, res): Promise<void> => {
                 FROM star_ratings
                 WHERE star = $1
                 `,
-            [starNumber]
+            [starNumber],
         )
         result.rows.forEach((value, index) => {
             result.rows[index] = new StarReview(
@@ -34,7 +34,7 @@ starRouter.get("/:starNum/ratings", async (req, res): Promise<void> => {
                 value.name,
                 value.content,
                 new DateTimeObject(value.time),
-                value.star
+                value.star,
             )
         })
         res.json(result.rows)
@@ -60,7 +60,7 @@ starRouter.post(
         try {
             const result = await pool.query(
                 "INSERT INTO star_ratings(name, content, time, star) VALUES ($1, $2, $3, $4) RETURNING id",
-                [name, content, time, starNumber]
+                [name, content, time, starNumber],
             )
             if (result.rows.length) {
                 res.json(
@@ -69,8 +69,8 @@ starRouter.post(
                         name,
                         content,
                         new DateTimeObject(time),
-                        starNumber
-                    )
+                        starNumber,
+                    ),
                 )
             } else {
                 res.status(400).send("Invalid parameters")
@@ -78,7 +78,7 @@ starRouter.post(
         } catch (err) {
             handleQueryError(err, res)
         }
-    }
+    },
 )
 
 export { starRouter }

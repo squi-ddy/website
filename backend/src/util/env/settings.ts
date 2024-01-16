@@ -9,7 +9,7 @@ class Settings {
         readonly STATIC_SITE_NAME: string,
         readonly STATIC_SITE_PROTOCOL: string,
         readonly OXFORD_API_ID: string,
-        readonly OXFORD_API_KEY: string
+        readonly OXFORD_API_KEY: string,
     ) {}
 }
 
@@ -23,7 +23,7 @@ const settings = new Settings(
     process.env.STATIC_SITE_NAME || "localhost",
     process.env.STATIC_SITE_PROTOCOL || "http",
     process.env.OXFORD_API_ID || "",
-    process.env.OXFORD_API_KEY || ""
+    process.env.OXFORD_API_KEY || "",
 )
 
 export { settings }

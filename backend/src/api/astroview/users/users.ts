@@ -14,7 +14,7 @@ userRouter.get(
         try {
             const result = await pool.query(
                 "SELECT name FROM users WHERE name=$1",
-                [req.params.name]
+                [req.params.name],
             )
             if (result.rows.length < 1) {
                 res.status(404).send("User not found")
@@ -24,7 +24,7 @@ userRouter.get(
         } catch (err) {
             handleQueryError(err, res)
         }
-    }
+    },
 )
 
 userRouter.post("/:name", async (req, res): Promise<void> => {
@@ -42,7 +42,7 @@ userRouter.post("/:name", async (req, res): Promise<void> => {
     } catch (err) {
         return handleQueryError(err, res)
     }
-    if (result.rowCount > 0) {
+    if (result.rowCount) {
         res.status(400).send("User already exists")
         return
     }
@@ -51,7 +51,7 @@ userRouter.post("/:name", async (req, res): Promise<void> => {
     try {
         insertionResult = await pool.query(
             "INSERT INTO users VALUES ($1, $2) RETURNING name",
-            [name, passwordSaltedHash]
+            [name, passwordSaltedHash],
         )
     } catch (err) {
         return handleQueryError(err, res)
@@ -72,7 +72,7 @@ userRouter.delete(
             const result = await pool.query("DELETE FROM users WHERE name=$1", [
                 req.params.name,
             ])
-            if (result.rowCount < 1) {
+            if (!result.rowCount) {
                 res.status(404).send("User not found")
                 return
             }
@@ -80,7 +80,7 @@ userRouter.delete(
         } catch (err) {
             handleQueryError(err, res)
         }
-    }
+    },
 )
 
 userRouter.patch(
@@ -99,25 +99,25 @@ userRouter.patch(
         if (res.writableEnded) return
 
         res.json({ name: req.params.name })
-    }
+    },
 )
 
 async function modifyPassword(
     password: string,
     req: Request,
-    res: Response
+    res: Response,
 ): Promise<void> {
     const passwordSaltedHash = await genSaltedHash(password)
     let updateResult: QueryResult
     try {
         updateResult = await pool.query(
             "UPDATE users SET hash = $2 WHERE name = $1",
-            [req.params.name, passwordSaltedHash]
+            [req.params.name, passwordSaltedHash],
         )
     } catch (err) {
         return handleQueryError(err, res)
     }
-    if (updateResult.rowCount < 1) {
+    if (!updateResult.rowCount) {
         res.status(404).send("User not found")
     }
 }

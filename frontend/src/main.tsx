@@ -22,7 +22,9 @@ const router = createBrowserRouter([
         path: "*",
         element: (
             <BasePage title="404">
-                <div className="grow text-xl text-center">This page doesn&#39;t exist</div>
+                <div className="grow text-xl text-center">
+                    This page doesn&#39;t exist
+                </div>
             </BasePage>
         ),
     },
@@ -31,5 +33,5 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
         <RouterProvider router={router} />
-    </React.StrictMode>
+    </React.StrictMode>,
 )

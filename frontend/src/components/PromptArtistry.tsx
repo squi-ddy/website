@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useRef, useState } from "react"
+import { MutableRefObject, useRef, useState } from "react"
 import { api } from "../util/axios"
 
 function PromptArtistry() {
@@ -58,7 +58,7 @@ function PromptArtistry() {
                                         )
                                             return
                                         const data = dataURL.slice(
-                                            dataURL.indexOf(",") + 1
+                                            dataURL.indexOf(",") + 1,
                                         )
                                         setSentImage(true)
                                         setImagePending(true)
@@ -67,10 +67,10 @@ function PromptArtistry() {
                                         })
                                             .then((resp) => {
                                                 setProbability(
-                                                    resp.data.probability
+                                                    resp.data.probability,
                                                 )
                                                 setPrompt(
-                                                    resp.data.prompt || ""
+                                                    resp.data.prompt || "",
                                                 )
                                                 setTimeTaken(resp.data.time)
                                                 setImagePending(false)

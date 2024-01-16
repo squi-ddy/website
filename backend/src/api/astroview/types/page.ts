@@ -3,6 +3,6 @@ export default class Page {
         readonly page_number: number,
         readonly name: string,
         readonly file_name: string,
-        readonly category: string
+        readonly category: string,
     ) {}
 }

@@ -6,6 +6,6 @@ export default class PageReview {
         readonly user: string,
         readonly description: string,
         readonly time: DateTimeObject,
-        readonly page: number
+        readonly page: number,
     ) {}
 }

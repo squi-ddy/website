@@ -16,6 +16,6 @@ export default class Product {
         readonly preview: string,
         readonly images: string[],
         readonly price: number,
-        readonly rating: Rating
+        readonly rating: Rating,
     ) {}
 }

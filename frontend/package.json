@@ -5,7 +5,7 @@
         "dev": "vite",
         "build": "etsc && vite build",
         "preview": "vite preview --port 5050",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "format": "prettier --write .",
         "typecheck": "tsc --noemit",
         "precommit": "npm run format && npm run lint && npm run typecheck"
