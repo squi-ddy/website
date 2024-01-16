@@ -5,12 +5,12 @@ services:
     build: ./backend
     env_file:
       - ./backend/.env
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "3000:3000"
 
   frontend:
     build: ./frontend
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "3001:8000"
