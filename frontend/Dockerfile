@@ -1,21 +1,18 @@
 FROM node:alpine AS base
 
-RUN npm i -g pnpm
-RUN apk --no-cache add --virtual build-deps build-base python3
-
 FROM base AS dependencies
 
+RUN apk --no-cache add --virtual build-deps build-base python3
 WORKDIR /app/
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm i -P
-RUN apk del build-deps
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev
 
 FROM base AS build
 
 WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-RUN pnpm run build
+RUN npm run build
 
 FROM nginx:alpine-slim AS deploy
 

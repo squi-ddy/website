@@ -1,28 +1,30 @@
-FROM node:alpine AS base
+FROM node:lts-alpine AS base
 
-RUN npm i -g pnpm
+FROM base AS builder
+
 RUN apk --no-cache add --virtual build-deps build-base python3
-
-FROM base AS dependencies
-
 WORKDIR /app/
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm i -P
-RUN apk del build-deps
-
-FROM base AS build
-
-WORKDIR /app/
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+RUN cp -r ./node_modules ./prod_node_modules
+RUN npm ci --include=dev
 COPY . .
-COPY --from=dependencies /app/node_modules ./node_modules
-RUN pnpm run build
-RUN pnpm prune --prod
+RUN npm run build
 
-FROM base AS deploy
-
-WORKDIR /app/
-COPY package.json pnpm-lock.yaml ./
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-
-CMD ["pnpm", "start"]
+# from https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#smaller-images-without-npmyarn
+FROM alpine AS deploy
+# Create app directory
+WORKDIR /usr/src/app
+# Add required binaries
+RUN apk add --no-cache libstdc++ dumb-init \
+  && addgroup -g 1000 node && adduser -u 1000 -G node -s /bin/sh -D node \
+  && chown node:node ./
+COPY --from=builder /usr/local/bin/node /usr/local/bin/
+COPY --from=builder /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
+USER node
+# Update the following COPY lines based on your codebase
+COPY --from=builder /app/prod_node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+# Run with dumb-init to not start node with PID=1, since Node.js was not designed to run as PID 1
+CMD ["dumb-init", "node", "dist/index.js"]
