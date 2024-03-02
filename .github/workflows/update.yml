@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Clone repository to local
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Copy env file
         run: cp ../.env ./backend/

@@ -5,8 +5,6 @@ FROM base AS builder
 RUN apk --no-cache add --virtual build-deps build-base python3
 WORKDIR /app/
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-RUN cp -r ./node_modules ./prod_node_modules
 RUN npm ci --include=dev
 COPY . .
 RUN npm run build
@@ -24,7 +22,6 @@ COPY --from=builder /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 USER node
 # Update the following COPY lines based on your codebase
-COPY --from=builder /app/prod_node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 # Run with dumb-init to not start node with PID=1, since Node.js was not designed to run as PID 1
 CMD ["dumb-init", "node", "dist/index.js"]
