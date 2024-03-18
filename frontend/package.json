@@ -28,7 +28,7 @@
         "@vitejs/plugin-react": "^4.0.0"
     },
     "devDependencies": {
-        "@types/node": "^20.11.10",
+        "@types/node": "^20.11.29",
         "@types/react": "^18.2.59",
         "@types/react-dom": "^18.2.19",
         "@types/react-router": "^5.1.19",
