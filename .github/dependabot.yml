@@ -3,12 +3,22 @@ updates:
   - package-ecosystem: "npm"
     directory: "/frontend/"
     schedule:
-      interval: weekly
+      interval: monthly
+    groups:
+      dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/backend/"
     schedule:
-      interval: weekly
+      interval: monthly
+    groups:
+      dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
