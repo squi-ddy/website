@@ -17,4 +17,4 @@ services:
       - peerly-backend
 
 include:
-  - peerly/docker-compose.yml
+  - peerly/docker-compose.ci.yml
