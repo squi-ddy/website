@@ -14,3 +14,9 @@ services:
     restart: unless-stopped
     ports:
       - "3001:8000"
+    depends_on:
+      - peerly-frontend
+      - peerly-backend
+
+include:
+  - peerly/docker-compose.yml
