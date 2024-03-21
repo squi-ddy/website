@@ -18,6 +18,9 @@ jobs:
       - name: Copy env file
         run: cp ../.env ./backend/
 
+      - name: Copy peerly secrets
+        run: cp ../peerly-secrets.json ./peerly/backend/src/secrets.json
+
       - name: Rebuild containers
         run: sudo docker compose build
 
