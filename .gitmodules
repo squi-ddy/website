@@ -1,0 +1,3 @@
+[submodule "peerly"]
+	path = peerly
+	url = https://github.com/squi-ddy/peerly
