@@ -1,3 +1,7 @@
 [submodule "peerly"]
 	path = peerly
 	url = https://github.com/squi-ddy/peerly
+
+[submodule "bridge"]
+	path = bridge
+	url = https://github.com/squi-ddy/bridge
