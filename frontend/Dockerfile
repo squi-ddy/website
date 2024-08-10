@@ -14,8 +14,10 @@ COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN npm run build
 
-FROM nginx:alpine-slim AS deploy
+FROM busybox:musl AS deploy
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /data/www
+WORKDIR /app/
+COPY --from=build /app/dist .
+COPY httpd.conf /etc/httpd.conf
+CMD ["busybox", "httpd", "-f", "-v", "-p", "3000", "-c", "/etc/httpd.conf"]
 

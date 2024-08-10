@@ -1,20 +1,20 @@
 services:
-  backend:
+  website-backend:
     build: ./backend
     env_file:
       - ./backend/.env
     restart: unless-stopped
-    ports:
-      - "3000:3000"
 
-  frontend:
+  website-frontend:
     build: ./frontend
     restart: unless-stopped
+  
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
     ports:
-      - "3001:8000"
-    depends_on:
-      - peerly-frontend
-      - peerly-backend
+      - "3000:8000"
+      - "3001:8001"
 
 include:
   - peerly/docker-compose.ci.yml

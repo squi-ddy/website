@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         element: (
             <BasePage title="404">
                 <div className="grow text-xl text-center">
-                    This page doesn&#39;t exist
+                    This page doesn&#39;t exist :&#40;
                 </div>
             </BasePage>
         ),
