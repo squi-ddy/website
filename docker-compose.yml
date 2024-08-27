@@ -1,3 +1,7 @@
+include:
+  - peerly/docker-compose.ci.yml
+  - bridge/docker-compose.ci.yml
+
 services:
   website-backend:
     build: ./backend
@@ -20,6 +24,3 @@ services:
       - website-frontend
       - peerly-backend
       - peerly-frontend
-
-include:
-  - peerly/docker-compose.ci.yml
