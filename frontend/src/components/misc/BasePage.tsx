@@ -15,7 +15,7 @@ function BasePage() {
         <div>
             <div
                 id="header"
-                className="mb-2 grid h-12 grid-flow-row grid-cols-3 items-center justify-items-center bg-gradient-to-r from-cyan-800 to-cyan-900 p-2"
+                className="mb-2 grid h-12 max-h-12 grid-flow-row grid-cols-3 items-center justify-items-center bg-gradient-to-r from-cyan-800 to-cyan-900 p-2"
             >
                 <motion.a
                     href="https://github.com/squi-ddy"
