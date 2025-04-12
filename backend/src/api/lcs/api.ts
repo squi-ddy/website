@@ -149,8 +149,9 @@ lcsRouter.get("/", async (_req, res) => {
     }
 })
 
-lcsRouter.get("/:id(\\d+)", async (req, res) => {
-    const lcs = await getLCSByIndex(parseInt(req.params.id || "0"))
+lcsRouter.get("/:id", async (req, res) => {
+    const id = parseInt(req.params.id || "0", 10)
+    const lcs = await getLCSByIndex(Number.isNaN(id) ? 0 : id)
     if (lcs === undefined) {
         res.status(404).send("Invalid LCS id")
     } else if (lcs === null) {
