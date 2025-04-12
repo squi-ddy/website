@@ -22,7 +22,7 @@ function BasePage() {
                     initial={{ x: "-100%" }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="col-start-1 h-full justify-self-start"
+                    className="col-start-1 justify-self-start"
                 >
                     <img src={avatar} alt="icon" className="h-8" />
                 </motion.a>
