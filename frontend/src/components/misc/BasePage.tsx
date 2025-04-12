@@ -22,9 +22,9 @@ function BasePage() {
                     initial={{ x: "-100%" }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="col-start-1 h-full justify-self-start"
+                    className="col-start-1 h-full justify-self-start max-h-full"
                 >
-                    <img src={avatar} alt="icon" className="h-full max-h-full" />
+                    <img src={avatar} alt="icon" className="h-full max-h-full object-scale-down" />
                 </motion.a>
                 <AnimatePresence mode="wait">
                     {title !== "" && (
