@@ -18,19 +18,18 @@ router.get("/", (_req, res) => {
     })
 })
 
-// #region CROSSWORD AND MINI
+// #region CROSSWORD
 
 type CrosswordReturnType = {
     success: true
-    crossword: CrosswordUserData
-    mini: CrosswordUserData
+    data: CrosswordUserData
 } | {
     success: false
     error: string
 }
 
 async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnType> {
-    // get today's crossword and mini
+    // get today's crossword
     const crossword = await noThrowAxios.get(
         "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
         {
@@ -43,6 +42,62 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
             },
         }
     )
+
+    // get id and print date
+    const id = crossword.data?.results?.[0]?.puzzle_id
+    const printDate = crossword.data?.results[0]?.print_date
+
+    if (crossword.status !== 200 || !id || !printDate) {
+        return {
+            success: false,
+            error: "Could not fetch crossword id",
+        }
+    }
+
+    // get user stats
+    const stats = await noThrowAxios.get(
+        `https://www.nytimes.com/svc/crosswords/v6/game/${id}.json`,
+        {
+            headers: {
+                Cookie: `NYT-S=${nytSCookie}`,
+            },
+        }
+    )
+
+    const crosswordData = stats.data
+
+    if (stats.status !== 200 || !crosswordData) {
+        return {
+            success: false,
+            error: "Could not fetch crossword stats",
+        }
+    }
+
+    // create return data
+    // has not been solved if crosswordData.calcs is empty (i.e. crosswordData.calcs.solved does not exist)
+    const userData: CrosswordUserData = crosswordData.calcs?.solved ? {
+        id: crosswordData.puzzleID,
+        date: printDate,
+        solved: crosswordData.calcs?.solved,
+        autocheck: crosswordData.autocheckEnabled,
+        solveSeconds: crosswordData.calcs?.secondsSpentSolving,
+    } : {
+        id: crosswordData.puzzleID,
+        date: printDate,
+        solved: false,
+    }
+
+    return {
+        success: true,
+        data: userData,
+    }
+}
+
+// #endregion
+
+// #region MINI
+async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
+    // get today's mini
     const mini = await noThrowAxios.get(
         "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
         {
@@ -57,12 +112,10 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
     )
 
     // get id and print date
-    const crosswordId = crossword.data?.results?.[0]?.puzzle_id
-    const crosswordPrintDate = crossword.data?.results[0]?.print_date
-    const miniId = mini.data?.results?.[0]?.puzzle_id
-    const miniPrintDate = mini.data?.results?.[0]?.print_date
+    const id = mini.data?.results?.[0]?.puzzle_id
+    const printDate = mini.data?.results?.[0]?.print_date
 
-    if (crossword.status !== 200 || mini.status !== 200 || !crosswordId || !miniId || !crosswordPrintDate || !miniPrintDate) {
+    if (mini.status !== 200 || !id || !printDate) {
         return {
             success: false,
             error: "Could not fetch crossword id",
@@ -70,8 +123,8 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
     }
 
     // get user stats
-    const crosswordStats = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/crosswords/v6/game/${crosswordId}.json`,
+    const stats = await noThrowAxios.get(
+        `https://www.nytimes.com/svc/crosswords/v6/game/${id}.json`,
         {
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
@@ -79,19 +132,9 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
         }
     )
 
-    const miniStats = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/crosswords/v6/game/${miniId}.json`,
-        {
-            headers: {
-                Cookie: `NYT-S=${nytSCookie}`,
-            },
-        }
-    )
+    const miniData = stats.data
 
-    const crosswordData = crosswordStats.data
-    const miniData = miniStats.data
-
-    if (crosswordStats.status !== 200 || miniStats.status !== 200 || !crosswordData || !miniData) {
+    if (stats.status !== 200 || !miniData) {
         return {
             success: false,
             error: "Could not fetch crossword stats",
@@ -99,38 +142,24 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
     }
 
     // create return data
-    // has not been solved if crosswordData.calcs is empty (i.e. solved does not exist)
-    const crosswordUserData: CrosswordUserData = crosswordData.calcs?.solved ? {
-        id: crosswordData.puzzleID,
-        date: crosswordPrintDate,
-        solved: crosswordData.calcs?.solved,
-        autocheck: crosswordData.autocheckEnabled,
-        solveSeconds: crosswordData.calcs?.secondsSpentSolving,
-    } : {
-        id: crosswordData.puzzleID,
-        date: crosswordPrintDate,
-        solved: false,
-    }
-
-    const miniUserData: CrosswordUserData = miniData.calcs?.solved ? {
+    // has not been solved if miniData.calcs is empty (i.e. miniData.calcs.solved does not exist)
+    const userData: CrosswordUserData = miniData.calcs?.solved ? {
         id: miniData.puzzleID,
-        date: miniPrintDate,
+        date: printDate,
         autocheck: miniData.autocheckEnabled,
         solved: miniData.calcs?.solved,
         solveSeconds: miniData.calcs?.secondsSpentSolving,
     } : {
         id: miniData.puzzleID,
-        date: miniPrintDate,
+        date: printDate,
         solved: false,
     }
 
     return {
         success: true,
-        crossword: crosswordUserData,
-        mini: miniUserData,
+        data: userData,
     }
 }
-
 // #endregion
 
 // #region WORDLE
@@ -388,49 +417,46 @@ router.get("/dailies", async (req, res) => {
     const date = DateTime.now()
     const dateString = date.toISO().split("T")[0]
 
-    // get crossword data
-    const crosswordData = await fetchCrosswordData(nytSCookie)
-    if (!crosswordData.success) {
-        res.status(400).json({
-            error: crosswordData.error,
-        })
-        return
+    type GenericReturnType<T> = {
+        success: true,
+        data: T
+    } | {
+        success: false,
+        error: string
     }
 
-    // get wordle data
-    const wordleData = await fetchWordleData(nytSCookie, dateString)
-    if (!wordleData.success) {
-        res.status(400).json({
-            error: wordleData.error,
-        })
-        return
+    const errorHandle = <T>(data: GenericReturnType<T>): T => {
+        if (!data.success) {
+            throw new Error(data.error)
+        }
+        return data.data
     }
 
-    // get connections data
-    const connectionsData = await fetchConnectionsData(nytSCookie, dateString)
-    if (!connectionsData.success) {
-        res.status(400).json({
-            error: connectionsData.error,
-        })
-        return
-    }
+    // fetch all game data
+    try {
+        const [crosswordData, miniData, wordleData, connectionsData, spellingBeeData] = await Promise.all([
+            fetchCrosswordData(nytSCookie).then(errorHandle),
+            fetchMiniData(nytSCookie).then(errorHandle),
+            fetchWordleData(nytSCookie, dateString).then(errorHandle),
+            fetchConnectionsData(nytSCookie, dateString).then(errorHandle),
+            fetchSpellingBeeData(nytSCookie).then(errorHandle),
+        ])
 
-    // get spelling bee data
-    const spellingBeeData = await fetchSpellingBeeData(nytSCookie)
-    if (!spellingBeeData.success) {
-        res.status(400).json({
-            error: spellingBeeData.error,
+        res.json({
+            crossword: crosswordData,
+            mini: miniData,
+            wordle: wordleData,
+            connections: connectionsData,
+            spellingBee: spellingBeeData,
         })
-        return
+    } catch (e) {
+        if (e instanceof Error) {
+            res.status(500).json({
+                error: e.message,
+            })
+        }
     }
-
-    res.json({
-        crossword: crosswordData.crossword,
-        mini: crosswordData.mini,
-        wordle: wordleData.data,
-        connections: connectionsData.data,
-        spellingBee: spellingBeeData.data,
-    })
+    
 })
 
 // #endregion
