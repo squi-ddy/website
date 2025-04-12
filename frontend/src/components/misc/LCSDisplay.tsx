@@ -1,10 +1,7 @@
 import { useEffect, useState, Fragment } from "react"
 import LCSClean from "../../types/LCSClean"
 
-function LCSDisplay(props: {
-    isSus: boolean
-    lcs: LCSClean
-}) {
+function LCSDisplay(props: { isSus: boolean; lcs: LCSClean }) {
     const [words, setWords] = useState([
         props.lcs.words[0],
         props.lcs.words[1],

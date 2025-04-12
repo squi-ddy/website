@@ -6,9 +6,11 @@ function Page(props: {
     setTitle: (title: string) => void
     children?: ReactNode
 }) {
+    const { setTitle, title, children } = props
+
     useEffect(() => {
-        props.setTitle(props.title)
-    }, [props.setTitle, props.title])
+        setTitle(title)
+    }, [setTitle, title])
 
     return (
         <AnimatePresence mode="wait">
@@ -19,7 +21,7 @@ function Page(props: {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                {props.children}
+                {children}
             </motion.div>
         </AnimatePresence>
     )

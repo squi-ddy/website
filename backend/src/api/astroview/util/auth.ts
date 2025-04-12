@@ -26,7 +26,7 @@ async function authenticate(
             res.status(401).send("Unauthorised")
             return
         }
-    } catch (err) {
+    } catch {
         res.status(401).send("Unauthorised")
         return
     }

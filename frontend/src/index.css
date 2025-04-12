@@ -1,9 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-    body {
-        @apply bg-neutral-900 text-white;
-    }
+body {
+    @apply bg-neutral-900 text-white;
 }

@@ -1,15 +1,20 @@
 import express from "express"
 import API from "../types/api"
 import manifest from "./info"
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 import { DateTime } from "luxon"
-import { ConnectionsUserData, CrosswordUserData, SpellingBeeUserData, WordleUserData } from "./gameData"
+import {
+    ConnectionsUserData,
+    CrosswordUserData,
+    SpellingBeeUserData,
+    WordleUserData,
+} from "./gameData"
 
 const router = express.Router()
 const nytGames = new API(router, manifest)
 
 const noThrowAxios = axios.create({
-    validateStatus: () => true
+    validateStatus: () => true,
 })
 
 router.get("/", (_req, res) => {
@@ -20,27 +25,31 @@ router.get("/", (_req, res) => {
 
 // #region CROSSWORD
 
-type CrosswordReturnType = {
-    success: true
-    data: CrosswordUserData
-} | {
-    success: false
-    error: string
-}
+type CrosswordReturnType =
+    | {
+          success: true
+          data: CrosswordUserData
+      }
+    | {
+          success: false
+          error: string
+      }
 
-async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnType> {
+async function fetchCrosswordData(
+    nytSCookie: string,
+): Promise<CrosswordReturnType> {
     // get today's crossword
     const crossword = await noThrowAxios.get(
         "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
         {
             params: {
                 publish_type: "daily",
-                limit: 1
+                limit: 1,
             },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     // get id and print date
@@ -61,7 +70,7 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     const crosswordData = stats.data
@@ -75,17 +84,19 @@ async function fetchCrosswordData(nytSCookie: string): Promise<CrosswordReturnTy
 
     // create return data
     // has not been solved if crosswordData.calcs is empty (i.e. crosswordData.calcs.solved does not exist)
-    const userData: CrosswordUserData = crosswordData.calcs?.solved ? {
-        id: crosswordData.puzzleID,
-        date: printDate,
-        solved: crosswordData.calcs?.solved,
-        autocheck: crosswordData.autocheckEnabled,
-        solveSeconds: crosswordData.calcs?.secondsSpentSolving,
-    } : {
-        id: crosswordData.puzzleID,
-        date: printDate,
-        solved: false,
-    }
+    const userData: CrosswordUserData = crosswordData.calcs?.solved
+        ? {
+              id: crosswordData.puzzleID,
+              date: printDate,
+              solved: crosswordData.calcs?.solved,
+              autocheck: crosswordData.autocheckEnabled,
+              solveSeconds: crosswordData.calcs?.secondsSpentSolving,
+          }
+        : {
+              id: crosswordData.puzzleID,
+              date: printDate,
+              solved: false,
+          }
 
     return {
         success: true,
@@ -103,12 +114,12 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
         {
             params: {
                 publish_type: "mini",
-                limit: 1
+                limit: 1,
             },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     // get id and print date
@@ -129,7 +140,7 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     const miniData = stats.data
@@ -143,17 +154,19 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
 
     // create return data
     // has not been solved if miniData.calcs is empty (i.e. miniData.calcs.solved does not exist)
-    const userData: CrosswordUserData = miniData.calcs?.solved ? {
-        id: miniData.puzzleID,
-        date: printDate,
-        autocheck: miniData.autocheckEnabled,
-        solved: miniData.calcs?.solved,
-        solveSeconds: miniData.calcs?.secondsSpentSolving,
-    } : {
-        id: miniData.puzzleID,
-        date: printDate,
-        solved: false,
-    }
+    const userData: CrosswordUserData = miniData.calcs?.solved
+        ? {
+              id: miniData.puzzleID,
+              date: printDate,
+              autocheck: miniData.autocheckEnabled,
+              solved: miniData.calcs?.solved,
+              solveSeconds: miniData.calcs?.secondsSpentSolving,
+          }
+        : {
+              id: miniData.puzzleID,
+              date: printDate,
+              solved: false,
+          }
 
     return {
         success: true,
@@ -164,15 +177,20 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
 
 // #region WORDLE
 
-type WordleReturnType = {
-    success: true
-    data: WordleUserData
-} | {
-    success: false
-    error: string
-}
+type WordleReturnType =
+    | {
+          success: true
+          data: WordleUserData
+      }
+    | {
+          success: false
+          error: string
+      }
 
-async function fetchWordleData(nytSCookie: string, dateString: string): Promise<WordleReturnType> {
+async function fetchWordleData(
+    nytSCookie: string,
+    dateString: string,
+): Promise<WordleReturnType> {
     // get today's wordle
     // wordle uses the date in your local timezone
     const wordle = await noThrowAxios.get(
@@ -199,7 +217,7 @@ async function fetchWordleData(nytSCookie: string, dateString: string): Promise<
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     const wordleData = stats.data
@@ -213,21 +231,27 @@ async function fetchWordleData(nytSCookie: string, dateString: string): Promise<
 
     // has not been solved if wordleData.states is undefined or wordleData.states[0].game_data.status !== "WIN" or "FAIL"
 
-    const complete = wordleData.states && (wordleData.states?.[0]?.game_data?.status === "WIN" || wordleData.states?.[0]?.game_data?.status === "FAIL")
+    const complete =
+        wordleData.states &&
+        (wordleData.states?.[0]?.game_data?.status === "WIN" ||
+            wordleData.states?.[0]?.game_data?.status === "FAIL")
     const solved = wordleData.states?.[0]?.game_data?.status === "WIN"
-    
-    const userData: WordleUserData = complete ? {
-        id: id,
-        date: printDate,
-        completed: true,
-        solved: solved,
-        hardMode: wordleData.states?.[0]?.game_data?.hardMode,
-        guesses: solved && wordleData.states?.[0]?.game_data?.currentRowIndex,
-    } : {
-        id: id,
-        date: printDate,
-        completed: false,
-    }
+
+    const userData: WordleUserData = complete
+        ? {
+              id: id,
+              date: printDate,
+              completed: true,
+              solved: solved,
+              hardMode: wordleData.states?.[0]?.game_data?.hardMode,
+              guesses:
+                  solved && wordleData.states?.[0]?.game_data?.currentRowIndex,
+          }
+        : {
+              id: id,
+              date: printDate,
+              completed: false,
+          }
 
     return {
         success: true,
@@ -238,15 +262,20 @@ async function fetchWordleData(nytSCookie: string, dateString: string): Promise<
 // #endregion
 
 // #region CONNECTIONS
-type ConnectionsReturnType = {
-    success: true
-    data: ConnectionsUserData
-} | {
-    success: false
-    error: string
-}
+type ConnectionsReturnType =
+    | {
+          success: true
+          data: ConnectionsUserData
+      }
+    | {
+          success: false
+          error: string
+      }
 
-async function fetchConnectionsData(nytSCookie: string, dateString: string): Promise<ConnectionsReturnType> {
+async function fetchConnectionsData(
+    nytSCookie: string,
+    dateString: string,
+): Promise<ConnectionsReturnType> {
     // get today's connections
     // connections uses the date in your local timezone
     const connections = await noThrowAxios.get(
@@ -273,7 +302,7 @@ async function fetchConnectionsData(nytSCookie: string, dateString: string): Pro
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     const connectionsData = stats.data
@@ -286,20 +315,26 @@ async function fetchConnectionsData(nytSCookie: string, dateString: string): Pro
     }
 
     // has not been solved if connectionsData.states is undefined or connectionsData.states[0].game_data.puzzleComplete is false
-    const complete = connectionsData.states && connectionsData.states?.[0]?.game_data?.puzzleComplete
-    
-    const userData: ConnectionsUserData = complete ? {
-        id: id,
-        date: printDate,
-        completed: true,
-        won: connectionsData.states?.[0]?.game_data?.puzzleWon,
-        categoriesSolved: connectionsData.states?.[0]?.game_data?.solvedCategories?.length,
-        mistakes: connectionsData.states?.[0]?.game_data?.mistakes,
-    } : {
-        id: id,
-        date: printDate,
-        completed: false,
-    }
+    const complete =
+        connectionsData.states &&
+        connectionsData.states?.[0]?.game_data?.puzzleComplete
+
+    const userData: ConnectionsUserData = complete
+        ? {
+              id: id,
+              date: printDate,
+              completed: true,
+              won: connectionsData.states?.[0]?.game_data?.puzzleWon,
+              categoriesSolved:
+                  connectionsData.states?.[0]?.game_data?.solvedCategories
+                      ?.length,
+              mistakes: connectionsData.states?.[0]?.game_data?.mistakes,
+          }
+        : {
+              id: id,
+              date: printDate,
+              completed: false,
+          }
 
     return {
         success: true,
@@ -309,15 +344,19 @@ async function fetchConnectionsData(nytSCookie: string, dateString: string): Pro
 // #endregion
 
 // #region SPELLING BEE
-type SpellingBeeReturnType = {
-    success: true
-    data: SpellingBeeUserData
-} | {
-    success: false
-    error: string
-}
+type SpellingBeeReturnType =
+    | {
+          success: true
+          data: SpellingBeeUserData
+      }
+    | {
+          success: false
+          error: string
+      }
 
-async function fetchSpellingBeeData(nytSCookie: string): Promise<SpellingBeeReturnType> {
+async function fetchSpellingBeeData(
+    nytSCookie: string,
+): Promise<SpellingBeeReturnType> {
     // not sure where the API is for date -> id
     // but the html page itself has the data
     const spellingBeeHTML = await noThrowAxios.get(
@@ -326,7 +365,7 @@ async function fetchSpellingBeeData(nytSCookie: string): Promise<SpellingBeeRetu
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     const html = spellingBeeHTML.data
@@ -367,7 +406,7 @@ async function fetchSpellingBeeData(nytSCookie: string): Promise<SpellingBeeRetu
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
-        }
+        },
     )
 
     const spellingBeeData = stats.data
@@ -381,18 +420,21 @@ async function fetchSpellingBeeData(nytSCookie: string): Promise<SpellingBeeRetu
     // spelling bee data can be empty
     const isNotEmpty = spellingBeeData.states[0]
 
-    const userData: SpellingBeeUserData = isNotEmpty ? {
-        id: id,
-        date: printDate,
-        empty: false,
-        revealed: spellingBeeData.states?.[0]?.game_data?.isRevealed,
-        rank: spellingBeeData.states?.[0]?.game_data?.rank,
-        wordsFound: spellingBeeData.states?.[0]?.game_data?.answers?.length,
-    } : {
-        id: id,
-        date: printDate,
-        empty: true,
-    }
+    const userData: SpellingBeeUserData = isNotEmpty
+        ? {
+              id: id,
+              date: printDate,
+              empty: false,
+              revealed: spellingBeeData.states?.[0]?.game_data?.isRevealed,
+              rank: spellingBeeData.states?.[0]?.game_data?.rank,
+              wordsFound:
+                  spellingBeeData.states?.[0]?.game_data?.answers?.length,
+          }
+        : {
+              id: id,
+              date: printDate,
+              empty: true,
+          }
 
     return {
         success: true,
@@ -417,13 +459,15 @@ router.get("/dailies", async (req, res) => {
     const date = DateTime.now()
     const dateString = date.toISO().split("T")[0]
 
-    type GenericReturnType<T> = {
-        success: true,
-        data: T
-    } | {
-        success: false,
-        error: string
-    }
+    type GenericReturnType<T> =
+        | {
+              success: true
+              data: T
+          }
+        | {
+              success: false
+              error: string
+          }
 
     const errorHandle = <T>(data: GenericReturnType<T>): T => {
         if (!data.success) {
@@ -434,7 +478,13 @@ router.get("/dailies", async (req, res) => {
 
     // fetch all game data
     try {
-        const [crosswordData, miniData, wordleData, connectionsData, spellingBeeData] = await Promise.all([
+        const [
+            crosswordData,
+            miniData,
+            wordleData,
+            connectionsData,
+            spellingBeeData,
+        ] = await Promise.all([
             fetchCrosswordData(nytSCookie).then(errorHandle),
             fetchMiniData(nytSCookie).then(errorHandle),
             fetchWordleData(nytSCookie, dateString).then(errorHandle),
@@ -456,7 +506,6 @@ router.get("/dailies", async (req, res) => {
             })
         }
     }
-    
 })
 
 // #endregion

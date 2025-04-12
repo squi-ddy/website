@@ -24,7 +24,7 @@ async function generateLCS(): Promise<LCS> {
             wordsResponse = await axios.get(
                 getStaticUrl("lcs", [`${startsWith}.txt`]),
             )
-        } catch (e) {
+        } catch {
             throw new Error(
                 `Error generating LCS: Failed get on ${startsWith} txt file`,
             )
@@ -60,7 +60,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
             `,
             [date],
         )
-    } catch (e) {
+    } catch {
         return null
     }
 
@@ -78,7 +78,7 @@ async function getLCS(): Promise<LCSMeaning | null> {
             )
             if (insertResult.rows.length === 0) return null
             id = insertResult.rows[0].id
-        } catch (e) {
+        } catch {
             return null
         }
     }
@@ -117,7 +117,7 @@ async function getLCSByIndex(
             `,
             [index],
         )
-    } catch (e) {
+    } catch {
         return null
     }
 

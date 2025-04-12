@@ -10,7 +10,6 @@ import State from "../../types/State"
 type LCSVar = LCSClean | null | undefined
 
 function LCSPage() {
-
     const [lcs, setLcs]: State<LCSVar> = useState<LCSVar>(null)
 
     useEffect(() => {
@@ -41,10 +40,7 @@ function LCSPage() {
             <Spacer h={2} />
             <Separator />
             <Spacer h={5} />
-            <LCSDisplay
-                isSus={false}
-                lcs={lcs as LCSClean}
-            />
+            <LCSDisplay isSus={false} lcs={lcs as LCSClean} />
         </>
     )
 

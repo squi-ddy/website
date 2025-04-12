@@ -3,7 +3,11 @@ import { AnimatePresence, motion } from "framer-motion"
 import { MdArrowForward } from "react-icons/md"
 import { useState } from "react"
 
-function LinkCard(props: { title: string; link: string; properLink?: boolean }) {
+function LinkCard(props: {
+    title: string
+    link: string
+    properLink?: boolean
+}) {
     const [hover, setHover] = useState(false)
 
     return (
@@ -37,7 +41,10 @@ function LinkCard(props: { title: string; link: string; properLink?: boolean }) 
                             exit={{ opacity: 0 }}
                             key="icon"
                         >
-                            <MdArrowForward className="mb-1" size="30"></MdArrowForward>
+                            <MdArrowForward
+                                className="mb-1"
+                                size="30"
+                            ></MdArrowForward>
                         </motion.div>
                     )}
                 </AnimatePresence>
