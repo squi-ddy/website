@@ -6,6 +6,7 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
+        "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "baseUrl": "src",
         "strict": true

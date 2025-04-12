@@ -1,15 +1,15 @@
-import { Pool } from "pg"
+import pg from "pg"
 import { settings } from "../env/settings"
 import { Response } from "express"
 
-const pools = new Map<string, Pool>()
+const pools = new Map<string, pg.Pool>()
 
-function getPool(database: string): Pool {
+function getPool(database: string): pg.Pool {
     const currentPool = pools.get(database)
     if (currentPool !== undefined) {
         return currentPool
     }
-    const pool = new Pool({
+    const pool = new pg.Pool({
         user: settings.DATABASE_USER,
         host: settings.DATABASE_HOST,
         database: database,
