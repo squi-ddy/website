@@ -24,7 +24,7 @@ function BasePage() {
                     transition={{ duration: 0.3 }}
                     className="col-start-1 h-full justify-self-start"
                 >
-                    <img src={avatar} alt="icon" className="h-full" />
+                    <img src={avatar} alt="icon" className="h-full max-h-full" />
                 </motion.a>
                 <AnimatePresence mode="wait">
                     {title !== "" && (
