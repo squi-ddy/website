@@ -15,16 +15,16 @@ function BasePage() {
         <div>
             <div
                 id="header"
-                className="mb-2 grid h-12 grid-flow-row grid-cols-3 items-center justify-items-center bg-gradient-to-r from-cyan-800 to-cyan-900 p-2"
+                className="mb-2 grid h-12 overflow-hidden grid-flow-row grid-cols-3 items-center justify-items-center bg-gradient-to-r from-cyan-800 to-cyan-900 p-2"
             >
                 <motion.a
                     href="https://github.com/squi-ddy"
                     initial={{ x: "-100%" }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="col-start-1 h-full justify-self-start"
+                    className="col-start-1 justify-self-start"
                 >
-                    <img src={avatar} alt="icon" className="h-full" />
+                    <img src={avatar} alt="icon" className="h-8" />
                 </motion.a>
                 <AnimatePresence mode="wait">
                     {title !== "" && (
