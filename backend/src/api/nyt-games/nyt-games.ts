@@ -89,7 +89,7 @@ async function fetchCrosswordData(
               id: id,
               date: printDate,
               solved: crosswordData.calcs?.solved,
-              autocheck: crosswordData.autocheckEnabled,
+              autocheck: crosswordData.autocheckEnabled ?? false, // autocheckEnabled is just not present if no autocheck
               solveSeconds: crosswordData.calcs?.secondsSpentSolving,
           }
         : {
@@ -158,8 +158,8 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
         ? {
               id: id,
               date: printDate,
-              autocheck: miniData.autocheckEnabled,
               solved: miniData.calcs?.solved,
+              autocheck: miniData.autocheckEnabled ?? false, // autocheckEnabled is just not present if no autocheck
               solveSeconds: miniData.calcs?.secondsSpentSolving,
           }
         : {
