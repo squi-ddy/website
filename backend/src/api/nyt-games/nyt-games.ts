@@ -86,14 +86,14 @@ async function fetchCrosswordData(
     // has not been solved if crosswordData.calcs is empty (i.e. crosswordData.calcs.solved does not exist)
     const userData: CrosswordUserData = crosswordData.calcs?.solved
         ? {
-              id: crosswordData.puzzleID,
+              id: id,
               date: printDate,
               solved: crosswordData.calcs?.solved,
               autocheck: crosswordData.autocheckEnabled,
               solveSeconds: crosswordData.calcs?.secondsSpentSolving,
           }
         : {
-              id: crosswordData.puzzleID,
+              id: id,
               date: printDate,
               solved: false,
           }
@@ -156,14 +156,14 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
     // has not been solved if miniData.calcs is empty (i.e. miniData.calcs.solved does not exist)
     const userData: CrosswordUserData = miniData.calcs?.solved
         ? {
-              id: miniData.puzzleID,
+              id: id,
               date: printDate,
               autocheck: miniData.autocheckEnabled,
               solved: miniData.calcs?.solved,
               solveSeconds: miniData.calcs?.secondsSpentSolving,
           }
         : {
-              id: miniData.puzzleID,
+              id: id,
               date: printDate,
               solved: false,
           }
