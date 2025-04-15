@@ -44,7 +44,7 @@ async function fetchCrosswordData(
         {
             params: {
                 publish_type: "daily",
-                limit: 1,
+                limit: 5,
             },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
@@ -114,7 +114,7 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
         {
             params: {
                 publish_type: "mini",
-                limit: 1,
+                limit: 5,
             },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
@@ -129,7 +129,7 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
     if (mini.status !== 200 || !id || !printDate) {
         return {
             success: false,
-            error: "Could not fetch crossword id",
+            error: "Could not fetch mini id",
         }
     }
 
@@ -148,7 +148,7 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
     if (stats.status !== 200 || !miniData) {
         return {
             success: false,
-            error: "Could not fetch crossword stats",
+            error: "Could not fetch mini stats",
         }
     }
 
