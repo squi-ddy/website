@@ -23,5 +23,6 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 USER node
 # Update the following COPY lines based on your codebase
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 # Run with dumb-init to not start node with PID=1, since Node.js was not designed to run as PID 1
 CMD ["dumb-init", "node", "dist/index.js"]
