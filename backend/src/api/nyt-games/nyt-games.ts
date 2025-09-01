@@ -79,6 +79,8 @@ async function fetchCrosswordData(
         return {
             success: false,
             error: "Could not fetch crossword stats",
+            code: stats.status,
+            data: crosswordData
         }
     }
 
@@ -149,6 +151,8 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
         return {
             success: false,
             error: "Could not fetch mini stats",
+            code: stats.status,
+            data: miniData
         }
     }
 
@@ -226,6 +230,8 @@ async function fetchWordleData(
         return {
             success: false,
             error: "Could not fetch Wordle stats",
+            code: stats.status,
+            data: wordleData
         }
     }
 
@@ -311,6 +317,8 @@ async function fetchConnectionsData(
         return {
             success: false,
             error: "Could not fetch Connections stats",
+            code: stats.status,
+            data: connectionsData
         }
     }
 
