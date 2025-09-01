@@ -422,6 +422,8 @@ async function fetchSpellingBeeData(
         return {
             success: false,
             error: "Could not fetch Spelling Bee stats",
+            code: stats.status,
+            data: spellingBeeData
         }
     }
 
@@ -479,7 +481,7 @@ router.get("/dailies", async (req, res) => {
 
     const errorHandle = <T>(data: GenericReturnType<T>): T => {
         if (!data.success) {
-            throw new Error(data.error)
+            throw new Error(data.error, {"cause": data})
         }
         return data.data
     }
@@ -511,6 +513,7 @@ router.get("/dailies", async (req, res) => {
         if (e instanceof Error) {
             res.status(500).json({
                 error: e.message,
+                cause: e.cause
             })
         }
     }
