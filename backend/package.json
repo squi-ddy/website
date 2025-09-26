@@ -37,7 +37,7 @@
         "@types/pg": "^8.6.4",
         "@typescript-eslint/eslint-plugin": "^8.1.0",
         "@typescript-eslint/parser": "^8.1.0",
-        "@vercel/ncc": "0.38.3",
+        "@vercel/ncc": "0.38.4",
         "dotenv": "^17.0.1",
         "eslint": "^9.9.0",
         "nodemon": "^3.0.0",
