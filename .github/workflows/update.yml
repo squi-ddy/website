@@ -15,6 +15,9 @@ jobs:
         with:
           submodules: true
 
+      - name: Check IP
+        run: curl https://api.ipify.org
+
       - name: Copy env file
         run: cp ../.env ./backend/
 
