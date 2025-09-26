@@ -19,8 +19,3 @@ services:
     ports:
       - "3000:8000"
       - "3001:8001"
-    depends_on:
-      - website-backend
-      - website-frontend
-      - peerly-backend
-      - peerly-frontend
