@@ -28,5 +28,5 @@ jobs:
         run: |
           echo '{"SESSION_SECRET": "${{ secrets.PEERLY_SESSION_SECRET }}", "MEMCACHED_SECRET": "${{ secrets.PEERLY_MEMCACHED_SECRET }}"}' > ./peerly/backend/src/secrets.json
 
-      - name: Run docker containers
-        run: podman compose up --build -d
+      - name: Signal for restart
+        run: echo "1" > $GITHUB_WORKSPACE/restart.txt
