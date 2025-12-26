@@ -29,4 +29,4 @@ jobs:
           echo '{"SESSION_SECRET": "${{ secrets.PEERLY_SESSION_SECRET }}", "MEMCACHED_SECRET": "${{ secrets.PEERLY_MEMCACHED_SECRET }}"}' > ./peerly/backend/src/secrets.json
 
       - name: Signal for restart
-        run: echo "1" > $GITHUB_WORKSPACE/restart.txt
+        run: echo "1" > restart.txt
