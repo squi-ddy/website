@@ -3,7 +3,7 @@ name: Website Updater
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   Update:
@@ -18,11 +18,15 @@ jobs:
       - name: Check IP
         run: curl https://api.ipify.org
 
-      - name: Copy env file
-        run: cp ../.env ./backend/
+      - name: Make env file
+        run: |
+          echo "DATABASE_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> backend/.env
+          echo "STATIC_SITE_NAME=static.squiddy.me >> backend/.env
+          echo "STATIC_SITE_PROTOCOL=https" >> backend/.env
 
-      - name: Copy peerly secrets
-        run: cp ../peerly-secrets.json ./peerly/backend/src/secrets.json
+      - name: Make Peerly secrets
+        run: |
+          echo '{"SESSION_SECRET": "${{ secrets.PEERLY_SESSION_SECRET }}", "MEMCACHED_SECRET": "${{ secrets.PEERLY_MEMCACHED_SECRET }}"}' > ./peerly/backend/src/secrets.json
 
       - name: Rebuild containers
         run: sudo docker compose build
