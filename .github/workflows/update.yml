@@ -28,11 +28,5 @@ jobs:
         run: |
           echo '{"SESSION_SECRET": "${{ secrets.PEERLY_SESSION_SECRET }}", "MEMCACHED_SECRET": "${{ secrets.PEERLY_MEMCACHED_SECRET }}"}' > ./peerly/backend/src/secrets.json
 
-      - name: Rebuild containers
-        run: sudo docker compose build
-
       - name: Run docker containers
-        run: sudo docker compose up -d
-
-      - name: Prune old containers
-        run: sudo docker system prune -f
+        run: podman compose up --build -d
