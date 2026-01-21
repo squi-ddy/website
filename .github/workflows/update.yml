@@ -20,7 +20,7 @@ jobs:
 
       - name: Make env file
         run: |
-          echo "DATABASE_HOST=host.containers.internal" >> backend/.env
+          echo "DATABASE_HOST=host.containers.internal" > backend/.env
           echo "DATABASE_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> backend/.env
           echo "STATIC_SITE_NAME=static.squiddy.me" >> backend/.env
           echo "STATIC_SITE_PROTOCOL=https" >> backend/.env
