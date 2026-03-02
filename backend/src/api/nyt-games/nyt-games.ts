@@ -112,14 +112,14 @@ async function fetchCrosswordData(
 
 // #region MIDI
 async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
+    // the midi API is more like the game API than the other crossword APIs
+    const dateLow = DateTime.now().minus({ days: 7 }).toISO().split("T")[0]
+    const dateHigh = DateTime.now().plus({ days: 7 }).toISO().split("T")[0]
+
     // get today's midi
     const midi = await noThrowAxios.get(
-        "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
+        `https://https://www.nytimes.com/svc/games/v1/archive/crossword_midi/${dateLow}/${dateHigh}`,
         {
-            params: {
-                publish_type: "midi",
-                limit: 5,
-            },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
@@ -127,8 +127,10 @@ async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
     )
 
     // get id and print date
-    const id = midi.data?.results?.[0]?.puzzle_id
-    const printDate = midi.data?.results?.[0]?.print_date
+    const results = midi.data
+    const puzzle = results?.[results.length - 1]
+    const id = puzzle?.puzzle_id
+    const printDate = puzzle?.print_date
 
     if (midi.status !== 200 || !id || !printDate) {
         return {
@@ -139,8 +141,9 @@ async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
 
     // get user stats
     const stats = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/crosswords/v6/game/${id}.json`,
+        `https://www.nytimes.com/svc/games/state/crossword_midi/latests`,
         {
+            params: { puzzle_ids: id },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
@@ -159,14 +162,15 @@ async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
     }
 
     // create return data
-    // has not been solved if miniData.calcs is empty (i.e. miniData.calcs.solved does not exist)
-    const userData: CrosswordUserData = midiData.calcs?.solved
+    // has not been solved if there is no firstSolve field
+    const userData: CrosswordUserData = midiData.states?.[0]?.game_data
+        ?.firstSolve
         ? {
               id: id,
               date: printDate,
-              solved: midiData.calcs?.solved,
-              autocheck: midiData.autocheckEnabled ?? false, // autocheckEnabled is just not present if no autocheck
-              solveSeconds: midiData.calcs?.secondsSpentSolving,
+              solved: true,
+              autocheck: midiData.states[0].game_data.firstSolveUsedAid,
+              solveSeconds: midiData.states[0].game_data.firstSolve,
           }
         : {
               id: id,
