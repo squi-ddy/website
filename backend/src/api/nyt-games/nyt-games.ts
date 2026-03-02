@@ -129,7 +129,7 @@ async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
     // get id and print date
     const results = midi.data
     const puzzle = results?.[results.length - 1]
-    const id = puzzle?.puzzle_id
+    const id = puzzle?.id
     const printDate = puzzle?.print_date
 
     if (midi.status !== 200 || !id || !printDate) {
