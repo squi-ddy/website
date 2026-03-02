@@ -33,6 +33,8 @@ type CrosswordReturnType =
     | {
           success: false
           error: string
+          code?: number
+          data?: unknown
       }
 
 async function fetchCrosswordData(
@@ -80,7 +82,7 @@ async function fetchCrosswordData(
             success: false,
             error: "Could not fetch crossword stats",
             code: stats.status,
-            data: crosswordData
+            data: crosswordData,
         }
     }
 
@@ -106,6 +108,77 @@ async function fetchCrosswordData(
     }
 }
 
+// #endregion
+
+// #region MIDI
+async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
+    // get today's midi
+    const midi = await noThrowAxios.get(
+        "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
+        {
+            params: {
+                publish_type: "midi",
+                limit: 5,
+            },
+            headers: {
+                Cookie: `NYT-S=${nytSCookie}`,
+            },
+        },
+    )
+
+    // get id and print date
+    const id = midi.data?.results?.[0]?.puzzle_id
+    const printDate = midi.data?.results?.[0]?.print_date
+
+    if (midi.status !== 200 || !id || !printDate) {
+        return {
+            success: false,
+            error: "Could not fetch midi id",
+        }
+    }
+
+    // get user stats
+    const stats = await noThrowAxios.get(
+        `https://www.nytimes.com/svc/crosswords/v6/game/${id}.json`,
+        {
+            headers: {
+                Cookie: `NYT-S=${nytSCookie}`,
+            },
+        },
+    )
+
+    const midiData = stats.data
+
+    if (stats.status !== 200 || !midiData) {
+        return {
+            success: false,
+            error: "Could not fetch midi stats",
+            code: stats.status,
+            data: midiData,
+        }
+    }
+
+    // create return data
+    // has not been solved if miniData.calcs is empty (i.e. miniData.calcs.solved does not exist)
+    const userData: CrosswordUserData = midiData.calcs?.solved
+        ? {
+              id: id,
+              date: printDate,
+              solved: midiData.calcs?.solved,
+              autocheck: midiData.autocheckEnabled ?? false, // autocheckEnabled is just not present if no autocheck
+              solveSeconds: midiData.calcs?.secondsSpentSolving,
+          }
+        : {
+              id: id,
+              date: printDate,
+              solved: false,
+          }
+
+    return {
+        success: true,
+        data: userData,
+    }
+}
 // #endregion
 
 // #region MINI
@@ -152,7 +225,7 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
             success: false,
             error: "Could not fetch mini stats",
             code: stats.status,
-            data: miniData
+            data: miniData,
         }
     }
 
@@ -189,6 +262,8 @@ type WordleReturnType =
     | {
           success: false
           error: string
+          code?: number
+          data?: unknown
       }
 
 async function fetchWordleData(
@@ -231,7 +306,7 @@ async function fetchWordleData(
             success: false,
             error: "Could not fetch Wordle stats",
             code: stats.status,
-            data: wordleData
+            data: wordleData,
         }
     }
 
@@ -276,6 +351,8 @@ type ConnectionsReturnType =
     | {
           success: false
           error: string
+          code?: number
+          data?: unknown
       }
 
 async function fetchConnectionsData(
@@ -318,7 +395,7 @@ async function fetchConnectionsData(
             success: false,
             error: "Could not fetch Connections stats",
             code: stats.status,
-            data: connectionsData
+            data: connectionsData,
         }
     }
 
@@ -360,6 +437,8 @@ type SpellingBeeReturnType =
     | {
           success: false
           error: string
+          code?: number
+          data?: unknown
       }
 
 async function fetchSpellingBeeData(
@@ -423,7 +502,7 @@ async function fetchSpellingBeeData(
             success: false,
             error: "Could not fetch Spelling Bee stats",
             code: stats.status,
-            data: spellingBeeData
+            data: spellingBeeData,
         }
     }
 
@@ -481,7 +560,7 @@ router.get("/dailies", async (req, res) => {
 
     const errorHandle = <T>(data: GenericReturnType<T>): T => {
         if (!data.success) {
-            throw new Error(data.error, {"cause": data})
+            throw new Error(data.error, { cause: data })
         }
         return data.data
     }
@@ -490,12 +569,14 @@ router.get("/dailies", async (req, res) => {
     try {
         const [
             crosswordData,
+            midiData,
             miniData,
             wordleData,
             connectionsData,
             spellingBeeData,
         ] = await Promise.all([
             fetchCrosswordData(nytSCookie).then(errorHandle),
+            fetchMidiData(nytSCookie).then(errorHandle),
             fetchMiniData(nytSCookie).then(errorHandle),
             fetchWordleData(nytSCookie, dateString).then(errorHandle),
             fetchConnectionsData(nytSCookie, dateString).then(errorHandle),
@@ -504,6 +585,7 @@ router.get("/dailies", async (req, res) => {
 
         res.json({
             crossword: crosswordData,
+            midi: midiData,
             mini: miniData,
             wordle: wordleData,
             connections: connectionsData,
@@ -513,7 +595,7 @@ router.get("/dailies", async (req, res) => {
         if (e instanceof Error) {
             res.status(500).json({
                 error: e.message,
-                cause: e.cause
+                cause: e.cause,
             })
         }
     }
