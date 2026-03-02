@@ -118,7 +118,7 @@ async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
 
     // get today's midi
     const midi = await noThrowAxios.get(
-        `https://https://www.nytimes.com/svc/games/v1/archive/crossword_midi/${dateLow}/${dateHigh}`,
+        `https://www.nytimes.com/svc/games/v1/archive/crossword_midi/${dateLow}/${dateHigh}`,
         {
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
