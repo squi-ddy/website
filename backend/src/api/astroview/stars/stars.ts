@@ -1,9 +1,9 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate } from "../util/auth"
-import StarReview from "../types/starReview"
-import DateTimeObject from "../types/dateTimeObject"
-import { getLocalTime } from "../../../util/time/time"
+import { getPool, handleQueryError } from "../../../util/db/postgres.js"
+import { authenticate } from "../util/auth.js"
+import StarReview from "../types/starReview.js"
+import DateTimeObject from "../types/dateTimeObject.js"
+import { getLocalTime } from "../../../util/time/time.js"
 
 const starRouter = express.Router()
 const pool = getPool("astroview")

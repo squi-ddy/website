@@ -1,18 +1,13 @@
-import { useEffect, useState } from "react"
-
 function Spacer(props: { h: number | string }) {
-    const [heightStr, setHeightStr]: [string, (val: string) => void] =
-        useState("1px")
+    let heightStr: string
 
-    useEffect(() => {
-        if (typeof props.h === "number") {
-            // clone tailwind's behaviour
-            const rem = props.h * 0.25
-            setHeightStr(`${rem}rem`)
-        } else {
-            setHeightStr(props.h)
-        }
-    }, [props.h])
+    if (typeof props.h === "number") {
+        // clone tailwind's behaviour
+        const rem = props.h * 0.25
+        heightStr = `${rem}rem`
+    } else {
+        heightStr = props.h
+    }
 
     return (
         <div

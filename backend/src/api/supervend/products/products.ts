@@ -1,13 +1,13 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate } from "../util/auth"
-import Review from "../types/review"
-import ShortProduct from "../types/shortProduct"
-import Rating from "../types/rating"
-import DateTimeObject from "../types/dateTimeObject"
-import Product from "../types/product"
-import DateObject from "../types/dateObject"
-import { getLocalTime } from "../../../util/time/time"
+import { getPool, handleQueryError } from "../../../util/db/postgres.js"
+import { authenticate } from "../util/auth.js"
+import Review from "../types/review.js"
+import ShortProduct from "../types/shortProduct.js"
+import Rating from "../types/rating.js"
+import DateTimeObject from "../types/dateTimeObject.js"
+import Product from "../types/product.js"
+import DateObject from "../types/dateObject.js"
+import { getLocalTime } from "../../../util/time/time.js"
 
 const productRouter = express.Router()
 const pool = getPool("supervend")
@@ -170,8 +170,8 @@ productRouter.post(
             let result = await pool.query(
                 `
                 INSERT INTO ratings(
-                    name, 
-                    rating, 
+                    name,
+                    rating,
                     content,
                     time,
                     product_id

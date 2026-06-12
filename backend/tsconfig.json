@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
-        "module": "es6",
+        "module": "Node16",
         "esModuleInterop": true,
-        "target": "es6",
-        "moduleResolution": "node",
+        "target": "es2022",
+        "moduleResolution": "node16",
         "sourceMap": true,
         "outDir": "dist",
+        "rootDir": "src",
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "baseUrl": "src",
         "strict": true
     },
-    "lib": ["es6"]
+    "lib": ["es2022"]
 }

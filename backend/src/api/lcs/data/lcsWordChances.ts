@@ -1,4 +1,4 @@
-import LCSChances from "../types/lcsChances"
+import LCSChances from "../types/lcsChances.js"
 
 export default {
     chancesArray: [

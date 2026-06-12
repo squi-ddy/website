@@ -1,5 +1,5 @@
-import Rating from "./rating"
-import DateObject from "./dateObject"
+import Rating from "./rating.js"
+import DateObject from "./dateObject.js"
 
 export default class Product {
     constructor(

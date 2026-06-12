@@ -1,6 +1,6 @@
 import express from "express"
-import API from "../types/api"
-import manifest from "./info"
+import API from "../types/api.js"
+import manifest from "./info.js"
 import axios from "axios"
 import { DateTime } from "luxon"
 import {
@@ -8,7 +8,7 @@ import {
     CrosswordUserData,
     SpellingBeeUserData,
     WordleUserData,
-} from "./gameData"
+} from "./gameData.js"
 
 const router = express.Router()
 const nytGames = new API(router, manifest)

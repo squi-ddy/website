@@ -1,5 +1,5 @@
 import pg from "pg"
-import { settings } from "../env/settings"
+import { settings } from "../env/settings.js"
 import { Response } from "express"
 
 const pools = new Map<string, pg.Pool>()

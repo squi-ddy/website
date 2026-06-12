@@ -1,11 +1,11 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate } from "../util/auth"
-import PageReview from "../types/pageReview"
-import Page from "../types/page"
-import DateTimeObject from "../types/dateTimeObject"
-import { getLocalTime } from "../../../util/time/time"
-import { getStaticUrl } from "../../../util/static/static"
+import { getPool, handleQueryError } from "../../../util/db/postgres.js"
+import { authenticate } from "../util/auth.js"
+import PageReview from "../types/pageReview.js"
+import Page from "../types/page.js"
+import DateTimeObject from "../types/dateTimeObject.js"
+import { getLocalTime } from "../../../util/time/time.js"
+import { getStaticUrl } from "../../../util/static/static.js"
 
 const pageRouter = express.Router()
 const pool = getPool("astroview")

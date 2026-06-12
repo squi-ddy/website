@@ -1,10 +1,10 @@
 import express from "express"
-import manifest from "./info"
-import API from "../types/api"
-import { productRouter } from "./products/products"
-import { userRouter } from "./users/users"
-import { categoryRouter } from "./categories/categories"
-import { imageRouter } from "./images/images"
+import manifest from "./info.js"
+import API from "../types/api.js"
+import { productRouter } from "./products/products.js"
+import { userRouter } from "./users/users.js"
+import { categoryRouter } from "./categories/categories.js"
+import { imageRouter } from "./images/images.js"
 
 const router = express.Router()
 const supervend = new API(router, manifest)

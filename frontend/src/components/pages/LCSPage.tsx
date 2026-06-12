@@ -1,11 +1,11 @@
-import Separator from "../util/Separator"
-import LCS from "../../types/LCS"
-import { getAPI } from "../../util/axios"
+import Separator from "../util/Separator.js"
+import LCS from "../../types/LCS.js"
+import { getAPI } from "../../util/axios.js"
 import { useEffect, useState } from "react"
-import Spacer from "../util/Spacer"
-import LCSDisplay from "../misc/LCSDisplay"
-import LCSClean from "../../types/LCSClean"
-import State from "../../types/State"
+import Spacer from "../util/Spacer.js"
+import LCSDisplay from "../misc/LCSDisplay.js"
+import LCSClean from "../../types/LCSClean.js"
+import State from "../../types/State.js"
 
 type LCSVar = LCSClean | null | undefined
 

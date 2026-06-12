@@ -1,14 +1,14 @@
 import express from "express"
-import { getPool, handleQueryError } from "../../util/db/postgres"
-import lcsWordChances from "./data/lcsWordChances"
-import { indexLCS, normaliseChances, selectFromChances } from "./util/util"
-import { getStaticUrl } from "../../util/static/static"
+import { getPool, handleQueryError } from "../../util/db/postgres.js"
+import lcsWordChances from "./data/lcsWordChances.js"
+import { indexLCS, normaliseChances, selectFromChances } from "./util/util.js"
+import { getStaticUrl } from "../../util/static/static.js"
 import axios from "axios"
-import LCS from "./types/lcs"
-import LCSMeaning from "./types/lcsMeaning"
-import { getLocalDateTime } from "../../util/time/time"
+import LCS from "./types/lcs.js"
+import LCSMeaning from "./types/lcsMeaning.js"
+import { getLocalDateTime } from "../../util/time/time.js"
 import { DateTime, Duration } from "luxon"
-import Meaning from "./types/meaning"
+import Meaning from "./types/meaning.js"
 
 const lcsRouter = express.Router()
 const pool = getPool("lcs")

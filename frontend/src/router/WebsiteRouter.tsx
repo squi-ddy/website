@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom"
-import Page from "../components/misc/Page"
-import HomePage from "../components/pages/HomePage"
-import LCSPage from "../components/pages/LCSPage"
+import Page from "../components/misc/Page.js"
+import HomePage from "../components/pages/HomePage.js"
+import LCSPage from "../components/pages/LCSPage.js"
 
 function WebsiteRouter(props: { setTitle: (title: string) => void }) {
     const location = useLocation()

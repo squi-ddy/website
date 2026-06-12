@@ -1,5 +1,5 @@
 import express from "express"
-import { getStaticUrl } from "../../../util/static/static"
+import { getStaticUrl } from "../../../util/static/static.js"
 
 const imageRouter = express.Router()
 

@@ -1,5 +1,5 @@
-import { settings } from "./util/env/settings"
-import { apiRouter } from "./api/api.www"
+import { settings } from "./util/env/settings.js"
+import { apiRouter } from "./api/api.www.js"
 import http from "http"
 import express from "express"
 import compression from "compression"

@@ -1,4 +1,4 @@
-import Meaning from "./meaning"
+import Meaning from "./meaning.js"
 
 export default class LCSMeaning {
     readonly l: Meaning

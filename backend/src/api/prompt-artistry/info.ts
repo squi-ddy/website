@@ -1,4 +1,4 @@
-import type Info from "../types/info"
+import type Info from "../types/info.js"
 
 export default {
     name: "Prompt Artistry API",

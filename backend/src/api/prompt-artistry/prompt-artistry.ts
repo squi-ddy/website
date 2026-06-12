@@ -1,6 +1,6 @@
 import express from "express"
-import API from "../types/api"
-import manifest from "./info"
+import API from "../types/api.js"
+import manifest from "./info.js"
 import axios from "axios"
 
 const router = express.Router()

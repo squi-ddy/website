@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import WebsiteRouter from "../../router/WebsiteRouter"
-import Spacer from "../util/Spacer"
+import WebsiteRouter from "../../router/WebsiteRouter.js"
+import Spacer from "../util/Spacer.js"
 
 import avatar from "../../public/avatar.png"
 import { useTitle } from "react-use"

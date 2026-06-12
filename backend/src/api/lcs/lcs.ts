@@ -1,7 +1,7 @@
 import express from "express"
-import API from "../types/api"
-import manifest from "./info"
-import { lcsRouter } from "./api"
+import API from "../types/api.js"
+import manifest from "./info.js"
+import { lcsRouter } from "./api.js"
 
 const router = express.Router()
 const lcs = new API(router, manifest)

@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express"
-import { getPool, handleQueryError } from "../../../util/db/postgres"
-import { authenticate, checkName, genSaltedHash } from "../util/auth"
+import { getPool, handleQueryError } from "../../../util/db/postgres.js"
+import { authenticate, checkName, genSaltedHash } from "../util/auth.js"
 import { QueryResult } from "pg"
-import User from "../types/user"
+import User from "../types/user.js"
 
 const userRouter = express.Router()
 const pool = getPool("supervend")

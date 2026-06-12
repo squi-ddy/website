@@ -1,4 +1,4 @@
-import { settings } from "../env/settings"
+import { settings } from "../env/settings.js"
 
 function getStaticUrl(apiName: string, path: string[]) {
     return `${settings.STATIC_SITE_PROTOCOL}://${

@@ -1,9 +1,9 @@
 import express from "express"
-import manifest from "./info"
-import API from "../types/api"
-import { pageRouter } from "./pages/pages"
-import { starRouter } from "./stars/stars"
-import { userRouter } from "./users/users"
+import manifest from "./info.js"
+import API from "../types/api.js"
+import { pageRouter } from "./pages/pages.js"
+import { starRouter } from "./stars/stars.js"
+import { userRouter } from "./users/users.js"
 
 const router = express.Router()
 const astroview = new API(router, manifest)

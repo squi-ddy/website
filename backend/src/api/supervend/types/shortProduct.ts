@@ -1,4 +1,4 @@
-import Rating from "./rating"
+import Rating from "./rating.js"
 
 export default class ShortProduct {
     constructor(

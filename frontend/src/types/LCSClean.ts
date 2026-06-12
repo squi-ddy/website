@@ -1,4 +1,4 @@
-import LCS from "./LCS"
+import LCS from "./LCS.js"
 
 export default class LCSClean {
     words: string[]

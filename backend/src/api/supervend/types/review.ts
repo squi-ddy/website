@@ -1,4 +1,4 @@
-import DateTimeObject from "./dateTimeObject"
+import DateTimeObject from "./dateTimeObject.js"
 
 export default class Review {
     constructor(

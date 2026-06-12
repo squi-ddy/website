@@ -1,6 +1,6 @@
-import LinkCard from "../util/LinkCard"
-import Separator from "../util/Separator"
-import Spacer from "../util/Spacer"
+import LinkCard from "../util/LinkCard.js"
+import Separator from "../util/Separator.js"
+import Spacer from "../util/Spacer.js"
 
 function HomePage() {
     return (
