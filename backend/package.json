@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "NODE_ENV=production node dist/index.js",
-        "build": "ncc build src/index.ts -o dist -t",
+        "build": "ncc build src/index.ts -o dist -t -m",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "typecheck": "tsc --noemit",
         "format": "prettier --write .",
