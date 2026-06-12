@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directories: 
+    directories:
       - "/frontend"
       - "/backend"
     schedule:
@@ -16,3 +16,8 @@ updates:
     directory: "/"
     schedule:
       interval: monthly
+
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
