@@ -24,7 +24,6 @@ router.get("/", (_req, res) => {
 })
 
 // #region CROSSWORD
-
 type CrosswordReturnType =
     | {
           success: true
@@ -38,16 +37,17 @@ type CrosswordReturnType =
       }
 
 async function fetchCrosswordData(
+    type: "midi" | "mini" | "daily",
     nytSCookie: string,
 ): Promise<CrosswordReturnType> {
+    // the crossword APIs are now unified!
+    const dateLow = DateTime.now().minus({ days: 7 }).toISO().split("T")[0]
+    const dateHigh = DateTime.now().plus({ days: 7 }).toISO().split("T")[0]
+
     // get today's crossword
     const crossword = await noThrowAxios.get(
-        "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
+        `https://www.nytimes.com/svc/games/v1/archive/crossword_${type}/${dateLow}/${dateHigh}`,
         {
-            params: {
-                publish_type: "daily",
-                limit: 5,
-            },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
@@ -55,20 +55,23 @@ async function fetchCrosswordData(
     )
 
     // get id and print date
-    const id = crossword.data?.results?.[0]?.puzzle_id
-    const printDate = crossword.data?.results[0]?.print_date
+    const results = crossword.data
+    const puzzle = results?.[results.length - 1]
+    const id = puzzle?.id
+    const printDate = puzzle?.print_date
 
     if (crossword.status !== 200 || !id || !printDate) {
         return {
             success: false,
-            error: "Could not fetch crossword id",
+            error: `Could not fetch ${type} id`,
         }
     }
 
     // get user stats
     const stats = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/crosswords/v6/game/${id}.json`,
+        `https://www.nytimes.com/svc/games/state/crossword_${type}/latests`,
         {
+            params: { puzzle_ids: id },
             headers: {
                 Cookie: `NYT-S=${nytSCookie}`,
             },
@@ -80,168 +83,22 @@ async function fetchCrosswordData(
     if (stats.status !== 200 || !crosswordData) {
         return {
             success: false,
-            error: "Could not fetch crossword stats",
+            error: `Could not fetch ${type} stats`,
             code: stats.status,
             data: crosswordData,
         }
     }
 
     // create return data
-    // has not been solved if crosswordData.calcs is empty (i.e. crosswordData.calcs.solved does not exist)
-    const userData: CrosswordUserData = crosswordData.calcs?.solved
-        ? {
-              id: id,
-              date: printDate,
-              solved: crosswordData.calcs?.solved,
-              autocheck: crosswordData.autocheckEnabled ?? false, // autocheckEnabled is just not present if no autocheck
-              solveSeconds: crosswordData.calcs?.secondsSpentSolving,
-          }
-        : {
-              id: id,
-              date: printDate,
-              solved: false,
-          }
-
-    return {
-        success: true,
-        data: userData,
-    }
-}
-
-// #endregion
-
-// #region MIDI
-async function fetchMidiData(nytSCookie: string): Promise<CrosswordReturnType> {
-    // the midi API is more like the game API than the other crossword APIs
-    const dateLow = DateTime.now().minus({ days: 7 }).toISO().split("T")[0]
-    const dateHigh = DateTime.now().plus({ days: 7 }).toISO().split("T")[0]
-
-    // get today's midi
-    const midi = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/games/v1/archive/crossword_midi/${dateLow}/${dateHigh}`,
-        {
-            headers: {
-                Cookie: `NYT-S=${nytSCookie}`,
-            },
-        },
-    )
-
-    // get id and print date
-    const results = midi.data
-    const puzzle = results?.[results.length - 1]
-    const id = puzzle?.id
-    const printDate = puzzle?.print_date
-
-    if (midi.status !== 200 || !id || !printDate) {
-        return {
-            success: false,
-            error: "Could not fetch midi id",
-        }
-    }
-
-    // get user stats
-    const stats = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/games/state/crossword_midi/latests`,
-        {
-            params: { puzzle_ids: id },
-            headers: {
-                Cookie: `NYT-S=${nytSCookie}`,
-            },
-        },
-    )
-
-    const midiData = stats.data
-
-    if (stats.status !== 200 || !midiData) {
-        return {
-            success: false,
-            error: "Could not fetch midi stats",
-            code: stats.status,
-            data: midiData,
-        }
-    }
-
-    // create return data
     // has not been solved if there is no firstSolve field
-    const userData: CrosswordUserData = midiData.states?.[0]?.game_data
+    const userData: CrosswordUserData = crosswordData.states?.[0]?.game_data
         ?.firstSolve
         ? {
               id: id,
               date: printDate,
               solved: true,
-              autocheck: midiData.states[0].game_data.firstSolveUsedAid,
-              solveSeconds: midiData.states[0].game_data.firstSolve,
-          }
-        : {
-              id: id,
-              date: printDate,
-              solved: false,
-          }
-
-    return {
-        success: true,
-        data: userData,
-    }
-}
-// #endregion
-
-// #region MINI
-async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
-    // get today's mini
-    const mini = await noThrowAxios.get(
-        "https://www.nytimes.com/svc/crosswords/v3/208105897/puzzles.json",
-        {
-            params: {
-                publish_type: "mini",
-                limit: 5,
-            },
-            headers: {
-                Cookie: `NYT-S=${nytSCookie}`,
-            },
-        },
-    )
-
-    // get id and print date
-    const id = mini.data?.results?.[0]?.puzzle_id
-    const printDate = mini.data?.results?.[0]?.print_date
-
-    if (mini.status !== 200 || !id || !printDate) {
-        return {
-            success: false,
-            error: "Could not fetch mini id",
-        }
-    }
-
-    // get user stats
-    const stats = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/crosswords/v6/game/${id}.json`,
-        {
-            headers: {
-                Cookie: `NYT-S=${nytSCookie}`,
-            },
-        },
-    )
-
-    const miniData = stats.data
-
-    if (stats.status !== 200 || !miniData) {
-        return {
-            success: false,
-            error: "Could not fetch mini stats",
-            code: stats.status,
-            data: miniData,
-        }
-    }
-
-    // create return data
-    // has not been solved if miniData.calcs is empty (i.e. miniData.calcs.solved does not exist)
-    const userData: CrosswordUserData = miniData.calcs?.solved
-        ? {
-              id: id,
-              date: printDate,
-              solved: miniData.calcs?.solved,
-              autocheck: miniData.autocheckEnabled ?? false, // autocheckEnabled is just not present if no autocheck
-              solveSeconds: miniData.calcs?.secondsSpentSolving,
+              autocheck: crosswordData.states[0].game_data.firstSolveUsedAid,
+              solveSeconds: crosswordData.states[0].game_data.firstSolve,
           }
         : {
               id: id,
@@ -257,7 +114,6 @@ async function fetchMiniData(nytSCookie: string): Promise<CrosswordReturnType> {
 // #endregion
 
 // #region WORDLE
-
 type WordleReturnType =
     | {
           success: true
@@ -579,9 +435,9 @@ router.get("/dailies", async (req, res) => {
             connectionsData,
             spellingBeeData,
         ] = await Promise.all([
-            fetchCrosswordData(nytSCookie).then(errorHandle),
-            fetchMidiData(nytSCookie).then(errorHandle),
-            fetchMiniData(nytSCookie).then(errorHandle),
+            fetchCrosswordData("daily", nytSCookie).then(errorHandle),
+            fetchCrosswordData("midi", nytSCookie).then(errorHandle),
+            fetchCrosswordData("mini", nytSCookie).then(errorHandle),
             fetchWordleData(nytSCookie, dateString).then(errorHandle),
             fetchConnectionsData(nytSCookie, dateString).then(errorHandle),
             fetchSpellingBeeData(nytSCookie).then(errorHandle),
