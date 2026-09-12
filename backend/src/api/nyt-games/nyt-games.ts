@@ -40,25 +40,54 @@ async function fetchCrosswordData(
     type: "midi" | "mini" | "daily",
     nytSCookie: string,
 ): Promise<CrosswordReturnType> {
-    // the crossword APIs are now unified!
-    const dateLow = DateTime.now().minus({ days: 7 }).toISO().split("T")[0]
-    const dateHigh = DateTime.now().plus({ days: 7 }).toISO().split("T")[0]
+    // const dateLow = DateTime.now().minus({ days: 2 }).toISO().split("T")[0]
+    // const dateHigh = DateTime.now().plus({ days: 2 }).toISO().split("T")[0]
 
     // get today's crossword
-    const crossword = await noThrowAxios.get(
-        `https://www.nytimes.com/svc/games/v1/archive/crossword_${type}/${dateLow}/${dateHigh}`,
-        {
-            headers: {
-                Cookie: `NYT-S=${nytSCookie}`,
+    // this endpoint seems to not check if the associated crossword is actually available right now
+    // funnily enough nyt broke their own crossword archive page because of this
+    // const crossword = await noThrowAxios.get(
+    //     `https://www.nytimes.com/svc/games/v1/archive/crossword_${type}/${dateLow}/${dateHigh}`,
+    //     {
+    //         headers: {
+    //             Cookie: `NYT-S=${nytSCookie}`,
+    //         },
+    //     },
+    // )
+
+    // get today's crossword
+    // check by trying to get the puzzle for date + 1,
+    // stepping back 1 day at a time until we find one that exists, or until date - 1
+    let crossword = null
+    for (let i = 1; i >= -1; i--) {
+        const date = DateTime.now().plus({ days: i }).toISO().split("T")[0]
+        crossword = await noThrowAxios.get(
+            `https://www.nytimes.com/svc/crosswords/v6/puzzle/${type}/${date}.json`,
+            {
+                headers: {
+                    Cookie: `NYT-S=${nytSCookie}`,
+                },
             },
-        },
-    )
+        )
+
+        if (crossword.status === 200) {
+            // ok
+            break
+        }
+    }
+
+    if (!crossword || crossword.status !== 200) {
+        return {
+            success: false,
+            error: `Could not fetch ${type} crossword`,
+            code: crossword?.status,
+            data: crossword?.data,
+        }
+    }
 
     // get id and print date
-    const results = crossword.data
-    const puzzle = results?.[results.length - 1]
-    const id = puzzle?.id
-    const printDate = puzzle?.print_date
+    const id = crossword.data?.id
+    const printDate = crossword.data?.publicationDate
 
     if (crossword.status !== 200 || !id || !printDate) {
         return {
